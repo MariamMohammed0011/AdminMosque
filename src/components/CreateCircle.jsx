@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MdOutlineDateRange } from "react-icons/md";
 export default function CreateCircle() {
   const [circleData, setCircleData] = useState({
     name: "",
-    type: "", // نوع الحلقة واحد فقط
-    students: [], // اختيار طلاب متعدد
+    type: "", 
+    students: [], 
   });
+const navigate = useNavigate();
 
   const studentsList = [
     "ياسمين حكش",
@@ -29,7 +31,7 @@ export default function CreateCircle() {
 
   const circleTypes = ["درس", "تسميع", "حديث", "تلقين"];
 
-  // toggle للطلاب (checkbox متعدد)
+  
   const toggleStudent = (student) => {
     setCircleData((prev) => {
       const exists = prev.students.includes(student);
@@ -66,13 +68,16 @@ export default function CreateCircle() {
     <div className="relative w-full max-w-[1100px] bg-[#F3F7F3] rounded-2xl shadow-md px-8 py-6
 + h-[600px]
 ">
-   {/* زر الرجوع */}
-        <div className="w-10 h-10 bg-white rounded-lg flex justify-center items-center absolute top-8 left-8 shadow-md cursor-pointer">
-          <img src="/arrow.png" alt="رجوع" className="w-5" />
-        </div>
+   
+        <div
+      className="w-10 h-10 bg-white rounded-lg flex justify-center items-center absolute top-8 left-8 shadow-md cursor-pointer"
+      onClick={() =>  navigate("/dashboard")}
+    >
+      <img src="/arrow.png" alt="رجوع" className="w-5" />
+    </div>
 
         <div className="flex flex-col lg:flex-row-reverse justify-start gap-10">
-          {/* نموذج بيانات الحلقة */}
+          
         
 <div className="flex-1 max-w-[450px] mt-4">
   <h2 className="text-right font-bold text-[30px] mb-5 text-[#2A3B1F]">
@@ -101,7 +106,7 @@ export default function CreateCircle() {
     ))}
   </div>
 
-  {/* تغليف input مع الأيقونة */}
+  
   <div className="relative">
     <input
       type="text"
@@ -117,7 +122,7 @@ export default function CreateCircle() {
   </div>
 </div>
 
-          {/* قائمة الطلاب */}
+         
           <div className="flex-1 max-w-[300px] mt-4  ">
             <h3 className="text-[25px] font-bold text-right mb-3 text-[#2A3B1F]">
               تعيين طلاب للحلقة
@@ -128,7 +133,7 @@ export default function CreateCircle() {
       key={student}
       className="flex justify-between items-center py-1 w-full flex-row-reverse cursor-pointer"
     >
-      {/* نضع الكلام قبل الشيك */}
+      
       <span className="text-[#6E9479] font-medium text-sm">
         {student}
       </span>
@@ -155,12 +160,12 @@ export default function CreateCircle() {
           </button>
         </div>
 
-        {/* صورة الزرع */}
+       
         <div className="absolute bottom-4 left-4 w-[180px] hidden md:block">
           <img src="/satl.png" alt="plant" className="w-full" />
         </div>
 
-        {/* دائرة خلفية */}
+       
         <div className="absolute -top-[150px] -right-[120px] w-[400px] h-[400px] rounded-full bg-[#D6EAD9] blur-[200px] z-0"></div>
       </div>
     </div>
