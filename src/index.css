@@ -15,3 +15,40 @@
 .custom-scroll::-webkit-scrollbar-track {
   background-color: #f1f1f1;
 }
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+.drop-shadow-black {
+  filter: drop-shadow(1px 1px 1px rgba(59, 57, 57, 0.4));
+}
+
+.react-datepicker__header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+  
+}
+
+.react-datepicker__current-month,
+.react-datepicker__navigation-icon,
+.react-datepicker__navigation {
+  display: none !important; 
+}
+
+
+.calendar-custom .react-datepicker__day-name {
+  @apply text-green-700 font-zain text-sm;
+
+}
+@keyframes toastBar {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.animate-toast-bar {
+  animation: toastBar 4s linear forwards;
+}

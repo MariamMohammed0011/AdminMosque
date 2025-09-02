@@ -1,171 +1,351 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate,useParams  } from "react-router-dom";
 import { MdOutlineDateRange } from "react-icons/md";
+import { toast } from "sonner"; 
+import { notifySuccess, notifyError, notifyInfo } from "../utils/toastNotifications.jsx";
+
+
 export default function CreateCircle() {
+  const { circleId } = useParams();
   const [circleData, setCircleData] = useState({
     name: "",
-    type: "", 
-    students: [], 
+    description: "",
+    circle_type_id: null,
+    student_id: [],
+    teacher_id: [],
   });
-const navigate = useNavigate();
-
-  const studentsList = [
-    "ياسمين حكش",
-    "ثواب القلم",
-    "نور جنفلادي",
-    "بثينة منور",
-    "سميرة يقدونس",
-    "لانا أبو قاسم",
-    "سارة نزيك",
-    "زهرة كوكش",
-     "لانا أبو قاسم",
-    "سارة نزيك",
-    "زهرة كوكش",
-     "لانا أبو قاسم",
-    "سارة نزيك",
-    "زهرة كوكش",
-     "لانا أبو قاسم",
-    "سارة نزيك",
-    "زهرة كوكش",
-  ];
-
-  const circleTypes = ["درس", "تسميع", "حديث", "تلقين"];
 
   
-  const toggleStudent = (student) => {
+  const [selectionMode, setSelectionMode] = useState("students"); 
+
+  const toggleStudent = (studentId) => {
     setCircleData((prev) => {
-      const exists = prev.students.includes(student);
-      const updated = exists
-        ? prev.students.filter((s) => s !== student)
-        : [...prev.students, student];
-      return { ...prev, students: updated };
+      const exists = prev.student_id.includes(studentId);
+      return {
+        ...prev,
+        student_id: exists
+          ? prev.student_id.filter((id) => id !== studentId)
+          : [...prev.student_id, studentId],
+      };
     });
   };
 
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch(
-        "https://api.devscape.online/api/circles/create",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(circleData),
-        }
-      );
-      const result = await response.json();
-      if (response.ok) {
-        alert("تم إنشاء الحلقة بنجاح!");
-      } else {
-        alert("فشل في الإرسال: " + result.message);
+  const selectTeacher = (teacherId) => {
+    setCircleData((prev) => ({
+      ...prev,
+      teacher_id: [teacherId],
+    }));
+  };
+
+  const navigate = useNavigate();
+  const [studentsList, setStudentsList] = useState([]);
+  const [teachersList, setTeachersList] = useState([]);
+  const [circleTypes, setCircleTypes] = useState([]);
+
+  useEffect(() => {
+    const fetchCircleTypes = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/circle-type/showAllType", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (res.ok)
+          setCircleTypes((data.Type || []).map((t) => ({ ...t, id: Number(t.id) })));
+      } catch (err) {
+        console.error(err);
       }
-    } catch (error) {
-      alert("حدث خطأ في الاتصال بالخادم");
+    };
+
+    const fetchStudentsAndTeachers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("api/mosque/AllStudentAndTeacher", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setStudentsList(data.AllStudent || []);
+          setTeachersList(data.AllTeacher || []);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchCircleTypes();
+    fetchStudentsAndTeachers();
+  }, []);
+useEffect(() => {
+  if (!circleId) return;
+
+  const fetchCircleData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      
+      const resCircle = await fetch(`/api/circle/showWithId/${circleId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const dataCircle = await resCircle.json();
+      if (resCircle.ok) {
+        setCircleData({
+          name: dataCircle.name || "",
+          description: dataCircle.description || "",
+          circle_type_id: dataCircle.typeCircle_id || null,
+          student_id: dataCircle.students?.map((s) => Number(s.id)) || [],
+          teacher_id: dataCircle.teachers?.map((t) => Number(t.id)) || [],
+        });
+      }
+
+     
+      const resLists = await fetch("/api/mosque/AllStudentAndTeacher", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const dataLists = await resLists.json();
+      if (resLists.ok) {
+        setStudentsList((dataLists.AllStudent || []).map(s => ({ ...s, id: Number(s.id) })));
+        setTeachersList((dataLists.AllTeacher || []).map(t => ({ ...t, id: Number(t.id) })));
+      }
+
+    } catch (err) {
+      console.error("خطأ في جلب بيانات الحلقة:", err);
     }
   };
 
+  fetchCircleData();
+}, [circleId]);
+
+
+ const handleSubmit = async () => {
+if (!circleData.name.trim()) {
+  notifyError("يرجى إدخال اسم الحلقة");
+
+  return;
+}
+if (!circleData.circle_type_id) {
+
+  notifyError("يرجى اختيار نوع الحلقة");
+  return;
+}
+if (circleData.student_id.length === 0) {
+
+  notifyError("يرجى اختيار الطلاب");
+  
+  return;
+}
+if (circleData.teacher_id.length === 0) {
+  
+  notifyError("يرجى اختيار معلم");
+  
+  return;
+}
+if (!circleData.description.trim()) {
+  notifyError("يرجى إدخال وصف للحلقة");
+
+  return;
+}
+
+  try {
+    const token = localStorage.getItem("token");
+    const url = circleId 
+      ? `/api/circle/update/${circleId}` 
+      : "/api/circle/create";           
+    const method = circleId ? "PUT" : "POST"; 
+
+    const response = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(circleData),
+    });
+
+    const result = await response.json();
+   if (response.ok) {
+  notifySuccess("تم حفظ الحلقة بنجاح!");  navigate("/dashboard");
+} else {
+notifyError("فشل في إضافة الحلقة!");
+  
+}
+
+} catch (error) {
+  
+notifyInfo("يرجى مراجعة المعلومات.");
+
+  console.error(error);
+}
+
+
+};
+
   return (
     <div className="min-h-screen bg-[#EBF0EA] flex items-start justify-center font-[Zain] p-6 relative">
-    <div className="relative w-full max-w-[1100px] bg-[#F3F7F3] rounded-2xl shadow-md px-8 py-6
-+ h-[600px]
-">
-   
+      <div className="relative w-full max-w-[1300px] bg-[#F3F7F3] rounded-2xl shadow-md px-8 py-5 h-[700px]">
+       
         <div
-      className="w-10 h-10 bg-white rounded-lg flex justify-center items-center absolute top-8 left-8 shadow-md cursor-pointer"
-      onClick={() =>  navigate("/dashboard")}
-    >
-      <img src="/arrow.png" alt="رجوع" className="w-5" />
-    </div>
+          className="w-10 h-10 bg-white rounded-lg flex justify-center items-center absolute top-8 left-8 shadow-md cursor-pointer"
+          onClick={() => navigate("/dashboard")}
+        >
+          <img src="/arrow.png" alt="رجوع" className="w-5" />
+        </div>
 
         <div className="flex flex-col lg:flex-row-reverse justify-start gap-10">
-          
         
-<div className="flex-1 max-w-[450px] mt-4">
-  <h2 className="text-right font-bold text-[30px] mb-5 text-[#2A3B1F]">
-    إنشاء حلقة جديدة
-  </h2>
+          <div className="flex-1 max-w-[600px] mt-4">
+            <h2 className="text-right font-bold text-[30px] mb-10 text-[#2A3B1F]">
+              إنشاء حلقة جديدة
+            </h2>
 
-  <h3 className="text-right font-bold text-[25px] mb-2 text-[#2A3B1F]">
-    نوع الحلقة
-  </h3>
-  <div className="flex flex-col space-y-3 mb-6 text-right rtl items-end">
-    {circleTypes.map((type) => (
-      <label
-        key={type}
-        className="flex items-center gap-3 cursor-pointer text-[#6E9479] font-medium"
-      >
-        {type}
-        <input
-          type="radio"
-          name="circleType"
-          value={type}
-          checked={circleData.type === type}
-          onChange={() => setCircleData({ ...circleData, type })}
-          className="accent-[#97BAA4] w-4 h-4"
-        />
-      </label>
-    ))}
-  </div>
-
-  
-  <div className="relative">
-    <input
-      type="text"
-      placeholder="اسم الحلقة"
-      value={circleData.name}
-      onChange={(e) => setCircleData({ ...circleData, name: e.target.value })}
-      className="bg-white rounded-xl shadow-md border border-gray-300 focus:border-[#97BAA4] w-full p-3 pr-10 text-right text-gray-600 placeholder-gray-400"
-    />
-    <MdOutlineDateRange
-      className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none"
-      size={24}
-    />
-  </div>
-</div>
-
-         
-          <div className="flex-1 max-w-[300px] mt-4  ">
-            <h3 className="text-[25px] font-bold text-right mb-3 text-[#2A3B1F]">
-              تعيين طلاب للحلقة
+            <h3 className="text-right font-bold text-[25px] mb-2 text-[#2A3B1F]">
+              اسم الحلقة
             </h3>
-          <div className="bg-white rounded-xl shadow-md p-4 h-[300px] overflow-y-auto rtl custom-scroll border border-gray-200">
-  {studentsList.map((student) => (
-    <label
-      key={student}
-      className="flex justify-between items-center py-1 w-full flex-row-reverse cursor-pointer"
-    >
-      
-      <span className="text-[#6E9479] font-medium text-sm">
-        {student}
-      </span>
-      <input
-        type="checkbox"
-        checked={circleData.students.includes(student)}
-        onChange={() => toggleStudent(student)}
-        className="accent-[#97BAA4] w-5 h-5 rounded-md " // rounded-full عشان يكون دائري
-      />
-    </label>
-  ))}
-</div>
+            <div className="relative mb-10">
+              <input
+                type="text"
+                placeholder="اسم الحلقة"
+                value={circleData.name}
+                onChange={(e) =>
+                  setCircleData({ ...circleData, name: e.target.value })
+                }
+                className="bg-white rounded-xl shadow-md border border-gray-300 focus:border-[#97BAA4] w-full p-3 pr-10 text-right text-gray-600 placeholder-gray-400"
+              />
+              <MdOutlineDateRange
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none"
+                size={24}
+              />
+            </div>
 
+           
+            <h3 className="text-right font-bold text-[25px] mb-3 text-[#2A3B1F]">
+              نوع الحلقة
+            </h3>
+            <div className="flex flex-col space-y-1 text-right py-3 items-end font-ruqaa ">
+              {circleTypes.map((type) => (
+                <label
+                  key={type.id}
+                  className="flex justify-between items-center w-full max-w-[180px] px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-100"
+                >
+                  <span className="text-[#2A3B1F]">{type.name}</span>
+                  <input
+                    type="radio"
+                    name="circleType"
+                    value={type.id}
+                    checked={circleData.circle_type_id === type.id}
+                    onChange={() =>
+                      setCircleData((prev) => ({ ...prev, circle_type_id: type.id }))
+                    }
+                    className="accent-[#97BAA4] w-5 h-5"
+                  />
+                </label>
+              ))}
+            </div>
+
+           
+            <h3 className="text-right font-bold text-[25px] mb-2 mt-3 text-[#2A3B1F]">
+              وصف الحلقة
+            </h3>
+            <div className="relative mb-10">
+              <input
+                type="text"
+                placeholder="وصف الحلقة"
+                value={circleData.description}
+                onChange={(e) =>
+                  setCircleData({ ...circleData, description: e.target.value })
+                }
+                className="bg-white rounded-xl shadow-md border border-gray-300 focus:border-[#97BAA4] w-full p-3 pr-10 text-right text-gray-600 placeholder-gray-400"
+              />
+              <MdOutlineDateRange
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none"
+                size={24}
+              />
+            </div>
+          </div>
+
+          
+          <div className="flex-1 max-w-[300px] mt-4">
+           
+            <div className="flex justify-center gap-4 mb-4">
+              <button
+                onClick={() => setSelectionMode("students")}
+                className={`px-4 py-2 rounded-lg font-bold ${
+                  selectionMode === "students"
+                    ? "bg-[#97BAA4] text-white"
+                    : "bg-gray-200"
+                }`}
+              >
+               تخصيص طلاب
+              </button>
+              <button
+                onClick={() => setSelectionMode("teachers")}
+                className={`px-4 py-2 rounded-lg font-bold ${
+                  selectionMode === "teachers"
+                    ? "bg-[#97BAA4] text-white"
+                    : "bg-gray-200"
+                }`}
+              >
+              اختيار معلم للحلقة
+              </button>
+            </div>
+
+           
+            <div className="bg-white rounded-xl shadow-md p-4 h-[300px] overflow-y-auto rtl custom-scroll border border-gray-200">
+              {selectionMode === "students" &&
+                studentsList.map((student) => (
+                  <label
+                    key={student.id}
+                    className="flex flex-row-reverse items-center justify-between py-1 w-full cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={circleData.student_id.includes(student.id)}
+                      onChange={() => toggleStudent(student.id)}
+                      className="accent-[#97BAA4] w-5 h-5"
+                    />
+                    <span className="text-[#6E9479] font-medium text-sm font-ruqaa">
+                      {student.first_name} {student.last_name}
+                    </span>
+                  </label>
+                ))}
+
+              {selectionMode === "teachers" &&
+                teachersList.map((teacher) => (
+                  <label
+                    key={teacher.id}
+                    className="flex flex-row-reverse items-center justify-between py-1 w-full cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="teacher"
+                      checked={circleData.teacher_id.includes(teacher.id)}
+                      onChange={() => selectTeacher(teacher.id)}
+                      className="accent-[#97BAA4] w-5 h-5"
+                    />
+                    <span className="text-[#6E9479] font-medium text-sm font-ruqaa">
+                      {teacher.first_name}
+                    </span>
+                  </label>
+                ))}
+            </div>
           </div>
         </div>
 
-        {/* زر الإنشاء */}
-        <div className=" mt-20 ">
-          <button
-            onClick={handleSubmit}
-            className="translate-x-[550px] w-[160px] h-[45px] bg-[#A5C6A1] rounded-lg text-black font-bold text-base hover:bg-[#97BAA4] transition-colors"
-          >
-            إنشاء
-          </button>
+      
+        <div>
+         <button
+  onClick={handleSubmit}
+  className="translate-x-[550px] w-[160px] h-[45px] bg-[#A5C6A1] rounded-lg text-black font-bold text-base hover:bg-[#97BAA4] transition-colors"
+>
+  {circleId ? "تعديل" : "إنشاء"}
+</button>
+
         </div>
 
        
         <div className="absolute bottom-4 left-4 w-[180px] hidden md:block">
           <img src="/satl.png" alt="plant" className="w-full" />
         </div>
-
-       
         <div className="absolute -top-[150px] -right-[120px] w-[400px] h-[400px] rounded-full bg-[#D6EAD9] blur-[200px] z-0"></div>
       </div>
     </div>

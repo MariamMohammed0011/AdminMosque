@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 export default function CreateTeacher() {
+  const mosqueId = localStorage.getItem("mosque_id");
   const [formData, setFormData] = useState({
-    email: "student@example.com",
-    password: "P@ssw0rd123",
+    email: "",
+    password: "",
     first_name: "",
     last_name: "",
-    mosque_id: 0,
+    mosque_id: mosqueId,
     birth_date: "",
     is_save_quran: true,
     phone: "",
@@ -21,13 +22,13 @@ const navigate = useNavigate();
 
  const handleSubmit = async () => {
   try {
-    const token = localStorage.getItem("token"); // جلب التوكين من التخزين
+    const token = localStorage.getItem("token"); 
 
     const response = await fetch("/api/auth/register/teacher", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`, // إضافة التوكين هنا
+        "Authorization": `Bearer ${token}`, 
       },
       body: JSON.stringify(formData),
     });
@@ -63,7 +64,7 @@ const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-[#FBFAF8] flex items-start justify-center font-[Zain] p-4">
       <div className="relative w-full max-w-[1200px] bg-[#FBFAF8] rounded-[20px] shadow-lg px-6 py-4">
-        {/* زر الرجوع */}
+       
         <div
       className="w-10 h-10 bg-white rounded-lg flex justify-center items-center absolute top-8 left-8 shadow-md cursor-pointer"
       onClick={() => navigate("/dashboard")}
@@ -72,14 +73,14 @@ const navigate = useNavigate();
     </div>
 
         <div className="flex flex-col lg:flex-row justify-center gap-6">
-          {/* تخصيص الحلقة */}
-          <div className="flex-1 max-w-[300px] mt-4">
-            <h3 className="text-[25px] font-bold text-right mb-2">تخصيص حلقة للمعلم</h3>
+         
+          <div className="flex-1 max-w-[200px] mt-40 mr-20">
+            <h3 className="text-[18px] font-ruqaa text-center mb-4 text-[#6E9479]  ">تخصيص حلقة للمعلم</h3>
             <div className="bg-white rounded-xl shadow-md p-2 h-[300px] overflow-y-auto rtl custom-scroll">
               {حلقات.map((label, index) => (
                 <label
                   key={index}
-                  className="flex justify-between items-center py-1 w-full flex-row-reverse"
+                  className="flex justify-between items-center py-1 w-full flex-row-reverse font-ruqaa"
                 >
                   <input
                     type="checkbox"
@@ -95,8 +96,8 @@ const navigate = useNavigate();
             </div>
           </div>
 
-          {/* نموذج البيانات */}
-          <div className="flex-1 max-w-[600px] mt-4">
+         
+          <div className="flex-2 max-w-[600px] mt-4">
             <h2 className="text-right font-bold text-[30px] mb-5">
               إضافة معلم جديد
             </h2>
@@ -104,7 +105,7 @@ const navigate = useNavigate();
               بيانات المعلم
             </h3>
 
-            <div className="space-y-4">
+            <div className="space-y-3 ">
               <input
                 type="text"
                 placeholder="الاسم"
@@ -112,7 +113,7 @@ const navigate = useNavigate();
                 onChange={(e) =>
                   setFormData({ ...formData, first_name: e.target.value })
                 }
-                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-3 text-right text-gray-500"
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
               />
                <input
                 type="text"
@@ -121,8 +122,16 @@ const navigate = useNavigate();
                 onChange={(e) =>
                   setFormData({ ...formData, last_name: e.target.value })
                 }
-                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-3 text-right text-gray-500"
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500 " 
               />
+               <input placeholder="البريد الإلكتروني" type="email" value={formData.email} onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                } className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"/>
+              <input placeholder="كلمة المرور" type="password"  value={formData.password} onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }    className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
+           />
+          
               <input
                 type="text"
                 placeholder="رقم الهاتف"
@@ -130,7 +139,7 @@ const navigate = useNavigate();
                 onChange={(e) =>
                   setFormData({ ...formData, phone: e.target.value })
                 }
-                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-3 text-right text-gray-500"
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
               />
                  <input
                 type="text"
@@ -139,7 +148,7 @@ const navigate = useNavigate();
                 onChange={(e) =>
                   setFormData({ ...formData, father_phone: e.target.value })
                 }
-                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-3 text-right text-gray-500"
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
               />
                 <input
                 type="text"
@@ -148,7 +157,7 @@ const navigate = useNavigate();
                 onChange={(e) =>
                   setFormData({ ...formData, address: e.target.value })
                 }
-                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-3 text-right text-gray-500"
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
               />
               <input
                 type="date"
@@ -157,7 +166,7 @@ const navigate = useNavigate();
                 onChange={(e) =>
                   setFormData({ ...formData, birth_date: e.target.value })
                 }
-                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-3 text-right text-gray-500"
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
               />
               <input
                 type="text"
@@ -166,7 +175,7 @@ const navigate = useNavigate();
                 onChange={(e) =>
                   setFormData({ ...formData, certificates: e.target.value })
                 }
-                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-3 text-right text-gray-500"
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
               />
               <input
                 type="text"
@@ -175,7 +184,7 @@ const navigate = useNavigate();
                 onChange={(e) =>
                   setFormData({ ...formData, experiences: e.target.value })
                 }
-                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-3 text-right text-gray-500"
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
               />
               <input
                 type="text"
@@ -187,13 +196,13 @@ const navigate = useNavigate();
                     memorized_parts: e.target.value,
                   })
                 }
-                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-3 text-right text-gray-500"
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
               />
             </div>
           </div>
         </div>
 
-        {/* زر الإنشاء */}
+       
         <div className="text-center mt-8">
           <button
             onClick={handleSubmit}
@@ -203,12 +212,12 @@ const navigate = useNavigate();
           </button>
         </div>
 
-        {/* صورة الزرع */}
+       
         <div className="absolute bottom-0 left-2 w-[200px] hidden md:block">
           <img src="/satl.png" alt="plant" className="w-full" />
         </div>
 
-        {/* دائرة خلفية */}
+       
         <div className="absolute -top-[150px] -right-[100px] w-[400px] h-[400px] rounded-full bg-[#D6EAD9] blur-[200px] z-0"></div>
       </div>
     </div>

@@ -43,17 +43,18 @@ export default function LoginAdmin() {
       }
 
       if (data.token) {
-        // خزّن التوكن
+      
         localStorage.setItem("token", data.token);
-        // خزّن بيانات المستخدم كاملة في شكل JSON نصي
+      
         localStorage.setItem("userData", JSON.stringify(data));
+         localStorage.setItem("mosque_id", data.mosque_id); 
       }
 
       setSuccess(true);
       setMessage("تم تسجيل الدخول بنجاح!");
       setFormData({ mosque_code: "", code_user: "" });
 
-      // تحويل إلى صفحة الداشبورد
+    
       navigate("/dashboard");
     } catch (err) {
       console.error("Error:", err);
