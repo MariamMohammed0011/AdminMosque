@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineLogin } from "react-icons/ai";
+import { notifySuccessWithIcon } from "../utils/notifySuccessWithIcon ";
 
 export default function LoginAdmin() {
   const navigate = useNavigate();
@@ -43,18 +45,17 @@ export default function LoginAdmin() {
       }
 
       if (data.token) {
-      
         localStorage.setItem("token", data.token);
-      
+
         localStorage.setItem("userData", JSON.stringify(data));
-         localStorage.setItem("mosque_id", data.mosque_id); 
+        localStorage.setItem("mosque_id", data.mosque_id);
       }
 
       setSuccess(true);
       setMessage("تم تسجيل الدخول بنجاح!");
       setFormData({ mosque_code: "", code_user: "" });
 
-    
+      notifySuccessWithIcon("تم تسجيل الدخول بنجاح!");
       navigate("/dashboard");
     } catch (err) {
       console.error("Error:", err);
@@ -68,13 +69,19 @@ export default function LoginAdmin() {
       <div className="flex shadow-2xl flex-col items-center relative">
         <div className="flex shadow-2xl">
           <div className="flex flex-col items-center justify-center text-center p-5 gap-4 bg-white rounded-2xl w-[400px]">
-            <h1 className="text-3xl font-bold text-[#2A603F] font-ruqaa pb-2">
-              تسجيل دخول الأدمن
-            </h1>
+            <div className="flex gap-3  flex-row-reverse text-right align-middle mx-auto">
+              <AiOutlineLogin
+                className=" mt-2 text-[#2A603F] flex-1 text-center align-middle "
+                size={29}
+              />
+              <h1 className=" flex-2 text-3xl font-bold text-[#2A603F] font-ruqaa pb-2  ">
+                ادخال حساب مشرف الجامع
+              </h1>
+            </div>
 
             <form onSubmit={handleSubmit} className="w-full space-y-4">
               <div className="flex flex-col text-right">
-                <label className="text-[#2A603F] font-ruqaa">كود الجامع</label>
+                <label className="text-[#2A603F] font-zain">كود الجامع</label>
                 <input
                   type="text"
                   name="mosque_code"
@@ -86,7 +93,7 @@ export default function LoginAdmin() {
               </div>
 
               <div className="flex flex-col text-right">
-                <label className="text-[#2A603F] font-ruqaa">كود الأدمن</label>
+                <label className="text-[#2A603F] font-zain">كود الأدمن</label>
                 <input
                   type="text"
                   name="code_user"

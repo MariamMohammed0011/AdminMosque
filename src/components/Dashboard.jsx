@@ -8,39 +8,64 @@ import { IoMdLogOut } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import Teachers from "./teachers/Teachers";
 import Students from "./students/Students";
-import Circles from "./circles/Circles"
+import Circles from "./circles/Circles";
 import Challenges from "./challenges/Challenges";
 import Statistics from "./statistics/Statistics";
+
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState("teachers"); 
+  const [activeSection, setActiveSection] = useState("teachers");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/loginAdmin");
   };
 
-  
   const renderContent = () => {
     switch (activeSection) {
       case "teachers":
-        return <div> <Teachers/></div>;
+        return (
+          <div>
+            {" "}
+            <Teachers />
+          </div>
+        );
       case "students":
-        return<div><Students/></div>;
+        return (
+          <div>
+            <Students />
+          </div>
+        );
       case "circles":
-        return <div><Circles/></div>;
+        return (
+          <div>
+            <Circles />
+          </div>
+        );
       case "results":
-        return <div><Statistics/></div>;
+        return (
+          <div>
+            <Statistics />
+          </div>
+        );
       case "challenges":
-        return <div><Challenges/></div>;
+        return (
+          <div>
+            <Challenges />
+          </div>
+        );
       default:
-        return <div className="text-right p-4">اختر قسماً من القائمة</div>;
+        return (
+          <div>
+            {" "}
+            <Teachers />
+          </div>
+        );
     }
   };
 
   return (
     <div className="shadow-2xl min-h-screen flex-row-reverse flex font-ruqaa bg-[#FBFAF8]">
-     
       <aside className="shadow-2xl rounded-2xl overflow-hidden w-64 min-h-screen bg-[#EBF3EC] flex flex-col text-[#2A603F] hidden md:flex relative">
         <div>
           <img
@@ -90,12 +115,10 @@ export default function Dashboard() {
         </nav>
       </aside>
 
-      {/* المين */}
-      <main className="shadow-2xl flex-1 p-6 flex flex-col gap-6 w-full">
+     
+      <main className="shadow-2xl flex-1 p-6 flex flex-col gap-6 w-full ">
         {renderContent()}
       </main>
     </div>
   );
 }
-
-

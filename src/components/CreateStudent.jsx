@@ -29,7 +29,7 @@ export default function CreateStudent() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
@@ -50,8 +50,6 @@ export default function CreateStudent() {
   return (
     <div className="min-h-screen bg-[#FBFAF8] flex items-start justify-center font-[Zain] p-1   ">
       <div className="relative w-full max-w-[1100px] bg-[#FBFAF8] rounded-[20px] shadow-lg px-6 py-10 pb-[160px]">
-        
-      
         <div
           className="w-10 h-10 bg-white rounded-lg flex justify-center items-center absolute top-8 left-8 shadow-md cursor-pointer"
           onClick={() => navigate("/dashboard")}
@@ -59,7 +57,9 @@ export default function CreateStudent() {
           <img src="/arrow.png" alt="رجوع" className="w-5" />
         </div>
 
-        <h2 className="text-right font-bold text-[30px] mb-5">إضافة طالب جديد</h2>
+        <h2 className="text-right font-bold text-[30px] mb-5">
+          إضافة طالب جديد
+        </h2>
         <h3 className="text-right font-bold text-[25px] mb-2">بيانات الطالب</h3>
 
         <div className="space-y-4">
@@ -174,7 +174,7 @@ export default function CreateStudent() {
           />
         </div>
 
-     <div className=" absolute mt-14 ">
+        <div className=" absolute mt-14 ">
           <button
             onClick={handleSubmit}
             className="translate-x-[550px] w-[160px] h-[45px] bg-[#A5C6A1] rounded-lg text-black font-bold text-base hover:bg-[#97BAA4] transition-colors"
@@ -183,8 +183,6 @@ export default function CreateStudent() {
           </button>
         </div>
 
-
-       
         <div className="absolute bottom-0 left-2 w-[200px] hidden md:block  ">
           <img src="/satl.png" alt="plant" className="w-full" />
         </div>

@@ -17,35 +17,34 @@ export default function CreateTeacher() {
     experiences: "",
     memorized_parts: "",
   });
-  
-const navigate = useNavigate();
 
- const handleSubmit = async () => {
-  try {
-    const token = localStorage.getItem("token"); 
+  const navigate = useNavigate();
 
-    const response = await fetch("/api/auth/register/teacher", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`, 
-      },
-      body: JSON.stringify(formData),
-    });
+  const handleSubmit = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-    const result = await response.json();
-    if (response.ok) {
-      alert("تم إنشاء المعلم بنجاح!");
-    } else {
-      console.error(result);
-      alert("فشل في الإرسال: " + result.message);
+      const response = await fetch("/api/auth/register/teacher", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert("تم إنشاء المعلم بنجاح!");
+      } else {
+        console.error(result);
+        alert("فشل في الإرسال: " + result.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("حدث خطأ في الاتصال بالخادم");
     }
-  } catch (error) {
-    console.error(error);
-    alert("حدث خطأ في الاتصال بالخادم");
-  }
-};
-
+  };
 
   const حلقات = [
     "حلقة عم",
@@ -64,18 +63,18 @@ const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-[#FBFAF8] flex items-start justify-center font-[Zain] p-4">
       <div className="relative w-full max-w-[1200px] bg-[#FBFAF8] rounded-[20px] shadow-lg px-6 py-4">
-       
         <div
-      className="w-10 h-10 bg-white rounded-lg flex justify-center items-center absolute top-8 left-8 shadow-md cursor-pointer"
-      onClick={() => navigate("/dashboard")}
-    >
-      <img src="/arrow.png" alt="رجوع" className="w-5" />
-    </div>
+          className="w-10 h-10 bg-white rounded-lg flex justify-center items-center absolute top-8 left-8 shadow-md cursor-pointer"
+          onClick={() => navigate("/dashboard")}
+        >
+          <img src="/arrow.png" alt="رجوع" className="w-5" />
+        </div>
 
         <div className="flex flex-col lg:flex-row justify-center gap-6">
-         
           <div className="flex-1 max-w-[200px] mt-40 mr-20">
-            <h3 className="text-[18px] font-ruqaa text-center mb-4 text-[#6E9479]  ">تخصيص حلقة للمعلم</h3>
+            <h3 className="text-[18px] font-ruqaa text-center mb-4 text-[#6E9479]  ">
+              تخصيص حلقة للمعلم
+            </h3>
             <div className="bg-white rounded-xl shadow-md p-2 h-[300px] overflow-y-auto rtl custom-scroll">
               {حلقات.map((label, index) => (
                 <label
@@ -96,7 +95,6 @@ const navigate = useNavigate();
             </div>
           </div>
 
-         
           <div className="flex-2 max-w-[600px] mt-4">
             <h2 className="text-right font-bold text-[30px] mb-5">
               إضافة معلم جديد
@@ -115,23 +113,34 @@ const navigate = useNavigate();
                 }
                 className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
               />
-               <input
+              <input
                 type="text"
                 placeholder="  الاسم الثاني "
                 value={formData.last_name}
                 onChange={(e) =>
                   setFormData({ ...formData, last_name: e.target.value })
                 }
-                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500 " 
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500 "
               />
-               <input placeholder="البريد الإلكتروني" type="email" value={formData.email} onChange={(e) =>
+              <input
+                placeholder="البريد الإلكتروني"
+                type="email"
+                value={formData.email}
+                onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
-                } className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"/>
-              <input placeholder="كلمة المرور" type="password"  value={formData.password} onChange={(e) =>
+                }
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
+              />
+              <input
+                placeholder="كلمة المرور"
+                type="password"
+                value={formData.password}
+                onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
-                }    className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
-           />
-          
+                }
+                className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
+              />
+
               <input
                 type="text"
                 placeholder="رقم الهاتف"
@@ -141,7 +150,7 @@ const navigate = useNavigate();
                 }
                 className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
               />
-                 <input
+              <input
                 type="text"
                 placeholder="   رقم الهاتف الاب "
                 value={formData.father_phone}
@@ -150,7 +159,7 @@ const navigate = useNavigate();
                 }
                 className="bg-white rounded-xl shadow-md border border-gray-200 focus:border-gray-400 w-full p-2 text-right text-gray-500"
               />
-                <input
+              <input
                 type="text"
                 placeholder="العنوان"
                 value={formData.address}
@@ -202,7 +211,6 @@ const navigate = useNavigate();
           </div>
         </div>
 
-       
         <div className="text-center mt-8">
           <button
             onClick={handleSubmit}
@@ -212,12 +220,10 @@ const navigate = useNavigate();
           </button>
         </div>
 
-       
         <div className="absolute bottom-0 left-2 w-[200px] hidden md:block">
           <img src="/satl.png" alt="plant" className="w-full" />
         </div>
 
-       
         <div className="absolute -top-[150px] -right-[100px] w-[400px] h-[400px] rounded-full bg-[#D6EAD9] blur-[200px] z-0"></div>
       </div>
     </div>

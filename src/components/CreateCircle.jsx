@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate,useParams  } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MdOutlineDateRange } from "react-icons/md";
-import { toast } from "sonner"; 
-import { notifySuccess, notifyError, notifyInfo } from "../utils/toastNotifications.jsx";
-
+import { toast } from "sonner";
+import {
+  notifySuccess,
+  notifyError,
+  notifyInfo,
+} from "../utils/toastNotifications.jsx";
 
 export default function CreateCircle() {
   const { circleId } = useParams();
@@ -15,8 +18,7 @@ export default function CreateCircle() {
     teacher_id: [],
   });
 
-  
-  const [selectionMode, setSelectionMode] = useState("students"); 
+  const [selectionMode, setSelectionMode] = useState("students");
 
   const toggleStudent = (studentId) => {
     setCircleData((prev) => {
@@ -51,7 +53,9 @@ export default function CreateCircle() {
         });
         const data = await res.json();
         if (res.ok)
-          setCircleTypes((data.Type || []).map((t) => ({ ...t, id: Number(t.id) })));
+          setCircleTypes(
+            (data.Type || []).map((t) => ({ ...t, id: Number(t.id) }))
+          );
       } catch (err) {
         console.error(err);
       }
@@ -76,114 +80,112 @@ export default function CreateCircle() {
     fetchCircleTypes();
     fetchStudentsAndTeachers();
   }, []);
-useEffect(() => {
-  if (!circleId) return;
+  useEffect(() => {
+    if (!circleId) return;
 
-  const fetchCircleData = async () => {
+    const fetchCircleData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const resCircle = await fetch(`/api/circle/showWithId/${circleId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const dataCircle = await resCircle.json();
+        if (resCircle.ok) {
+          setCircleData({
+            name: dataCircle.name || "",
+            description: dataCircle.description || "",
+            circle_type_id: dataCircle.typeCircle_id || null,
+            student_id: dataCircle.students?.map((s) => Number(s.id)) || [],
+            teacher_id: dataCircle.teachers?.map((t) => Number(t.id)) || [],
+          });
+        }
+
+        const resLists = await fetch("/api/mosque/AllStudentAndTeacher", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const dataLists = await resLists.json();
+        if (resLists.ok) {
+          setStudentsList(
+            (dataLists.AllStudent || []).map((s) => ({
+              ...s,
+              id: Number(s.id),
+            }))
+          );
+          setTeachersList(
+            (dataLists.AllTeacher || []).map((t) => ({
+              ...t,
+              id: Number(t.id),
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("خطأ في جلب بيانات الحلقة:", err);
+      }
+    };
+
+    fetchCircleData();
+  }, [circleId]);
+
+  const handleSubmit = async () => {
+    if (!circleData.name.trim()) {
+      notifyError("يرجى إدخال اسم الحلقة");
+
+      return;
+    }
+    if (!circleData.circle_type_id) {
+      notifyError("يرجى اختيار نوع الحلقة");
+      return;
+    }
+    if (circleData.student_id.length === 0) {
+      notifyError("يرجى اختيار الطلاب");
+
+      return;
+    }
+    if (circleData.teacher_id.length === 0) {
+      notifyError("يرجى اختيار معلم");
+
+      return;
+    }
+    if (!circleData.description.trim()) {
+      notifyError("يرجى إدخال وصف للحلقة");
+
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
+      const url = circleId
+        ? `/api/circle/update/${circleId}`
+        : "/api/circle/create";
+      const method = circleId ? "PUT" : "POST";
 
-      
-      const resCircle = await fetch(`/api/circle/showWithId/${circleId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(circleData),
       });
-      const dataCircle = await resCircle.json();
-      if (resCircle.ok) {
-        setCircleData({
-          name: dataCircle.name || "",
-          description: dataCircle.description || "",
-          circle_type_id: dataCircle.typeCircle_id || null,
-          student_id: dataCircle.students?.map((s) => Number(s.id)) || [],
-          teacher_id: dataCircle.teachers?.map((t) => Number(t.id)) || [],
-        });
-      }
 
-     
-      const resLists = await fetch("/api/mosque/AllStudentAndTeacher", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const dataLists = await resLists.json();
-      if (resLists.ok) {
-        setStudentsList((dataLists.AllStudent || []).map(s => ({ ...s, id: Number(s.id) })));
-        setTeachersList((dataLists.AllTeacher || []).map(t => ({ ...t, id: Number(t.id) })));
+      const result = await response.json();
+      if (response.ok) {
+        notifySuccess("تم حفظ الحلقة بنجاح!");
+        navigate("/dashboard");
+      } else {
+        notifyError("فشل في إضافة الحلقة!");
       }
+    } catch (error) {
+      notifyInfo("يرجى مراجعة المعلومات.");
 
-    } catch (err) {
-      console.error("خطأ في جلب بيانات الحلقة:", err);
+      console.error(error);
     }
   };
-
-  fetchCircleData();
-}, [circleId]);
-
-
- const handleSubmit = async () => {
-if (!circleData.name.trim()) {
-  notifyError("يرجى إدخال اسم الحلقة");
-
-  return;
-}
-if (!circleData.circle_type_id) {
-
-  notifyError("يرجى اختيار نوع الحلقة");
-  return;
-}
-if (circleData.student_id.length === 0) {
-
-  notifyError("يرجى اختيار الطلاب");
-  
-  return;
-}
-if (circleData.teacher_id.length === 0) {
-  
-  notifyError("يرجى اختيار معلم");
-  
-  return;
-}
-if (!circleData.description.trim()) {
-  notifyError("يرجى إدخال وصف للحلقة");
-
-  return;
-}
-
-  try {
-    const token = localStorage.getItem("token");
-    const url = circleId 
-      ? `/api/circle/update/${circleId}` 
-      : "/api/circle/create";           
-    const method = circleId ? "PUT" : "POST"; 
-
-    const response = await fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(circleData),
-    });
-
-    const result = await response.json();
-   if (response.ok) {
-  notifySuccess("تم حفظ الحلقة بنجاح!");  navigate("/dashboard");
-} else {
-notifyError("فشل في إضافة الحلقة!");
-  
-}
-
-} catch (error) {
-  
-notifyInfo("يرجى مراجعة المعلومات.");
-
-  console.error(error);
-}
-
-
-};
 
   return (
     <div className="min-h-screen bg-[#EBF0EA] flex items-start justify-center font-[Zain] p-6 relative">
       <div className="relative w-full max-w-[1300px] bg-[#F3F7F3] rounded-2xl shadow-md px-8 py-5 h-[700px]">
-       
         <div
           className="w-10 h-10 bg-white rounded-lg flex justify-center items-center absolute top-8 left-8 shadow-md cursor-pointer"
           onClick={() => navigate("/dashboard")}
@@ -192,7 +194,6 @@ notifyInfo("يرجى مراجعة المعلومات.");
         </div>
 
         <div className="flex flex-col lg:flex-row-reverse justify-start gap-10">
-        
           <div className="flex-1 max-w-[600px] mt-4">
             <h2 className="text-right font-bold text-[30px] mb-10 text-[#2A3B1F]">
               إنشاء حلقة جديدة
@@ -217,7 +218,6 @@ notifyInfo("يرجى مراجعة المعلومات.");
               />
             </div>
 
-           
             <h3 className="text-right font-bold text-[25px] mb-3 text-[#2A3B1F]">
               نوع الحلقة
             </h3>
@@ -234,7 +234,10 @@ notifyInfo("يرجى مراجعة المعلومات.");
                     value={type.id}
                     checked={circleData.circle_type_id === type.id}
                     onChange={() =>
-                      setCircleData((prev) => ({ ...prev, circle_type_id: type.id }))
+                      setCircleData((prev) => ({
+                        ...prev,
+                        circle_type_id: type.id,
+                      }))
                     }
                     className="accent-[#97BAA4] w-5 h-5"
                   />
@@ -242,7 +245,6 @@ notifyInfo("يرجى مراجعة المعلومات.");
               ))}
             </div>
 
-           
             <h3 className="text-right font-bold text-[25px] mb-2 mt-3 text-[#2A3B1F]">
               وصف الحلقة
             </h3>
@@ -263,9 +265,7 @@ notifyInfo("يرجى مراجعة المعلومات.");
             </div>
           </div>
 
-          
           <div className="flex-1 max-w-[300px] mt-4">
-           
             <div className="flex justify-center gap-4 mb-4">
               <button
                 onClick={() => setSelectionMode("students")}
@@ -275,7 +275,7 @@ notifyInfo("يرجى مراجعة المعلومات.");
                     : "bg-gray-200"
                 }`}
               >
-               تخصيص طلاب
+                تخصيص طلاب
               </button>
               <button
                 onClick={() => setSelectionMode("teachers")}
@@ -285,11 +285,10 @@ notifyInfo("يرجى مراجعة المعلومات.");
                     : "bg-gray-200"
                 }`}
               >
-              اختيار معلم للحلقة
+                اختيار معلم للحلقة
               </button>
             </div>
 
-           
             <div className="bg-white rounded-xl shadow-md p-4 h-[300px] overflow-y-auto rtl custom-scroll border border-gray-200">
               {selectionMode === "students" &&
                 studentsList.map((student) => (
@@ -331,18 +330,15 @@ notifyInfo("يرجى مراجعة المعلومات.");
           </div>
         </div>
 
-      
         <div>
-         <button
-  onClick={handleSubmit}
-  className="translate-x-[550px] w-[160px] h-[45px] bg-[#A5C6A1] rounded-lg text-black font-bold text-base hover:bg-[#97BAA4] transition-colors"
->
-  {circleId ? "تعديل" : "إنشاء"}
-</button>
-
+          <button
+            onClick={handleSubmit}
+            className="translate-x-[550px] w-[160px] h-[45px] bg-[#A5C6A1] rounded-lg text-black font-bold text-base hover:bg-[#97BAA4] transition-colors"
+          >
+            {circleId ? "تعديل" : "إنشاء"}
+          </button>
         </div>
 
-       
         <div className="absolute bottom-4 left-4 w-[180px] hidden md:block">
           <img src="/satl.png" alt="plant" className="w-full" />
         </div>
