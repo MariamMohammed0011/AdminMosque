@@ -26,7 +26,7 @@ export default function Students() {
     experiences: "",
     memorized_parts: 0,
     is_save_quran: false,
-    password: "",
+    // password: "",
   });
 
   const navigate = useNavigate();
@@ -448,7 +448,7 @@ export default function Students() {
               حافظ للقرآن
             </label>
 
-            <input
+            {/* <input
               type="password"
               value={formData.password}
               onChange={(e) =>
@@ -456,7 +456,7 @@ export default function Students() {
               }
               className="w-full border rounded p-2 text-right"
               placeholder="كلمة المرور"
-            />
+            /> */}
 
             <button
               onClick={handleUpdate}

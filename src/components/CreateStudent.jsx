@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
+import {
+  notifySuccess,
+  notifyError,
+  notifyInfo,
+} from "../utils/toastNotifications.jsx";
 export default function CreateStudent() {
   const mosqueId = localStorage.getItem("mosque_id");
   const [formData, setFormData] = useState({
@@ -36,14 +42,17 @@ export default function CreateStudent() {
 
       const result = await response.json();
       if (response.ok) {
-        alert("تم إنشاء الطالب بنجاح!");
+         notifySuccess("تم إنشاء الطالب بنجاح!");
+       
       } else {
         console.error(result);
-        alert("فشل في الإرسال: " + result.message);
+         notifyError(" فشل في الإرسال:");
+        
       }
     } catch (error) {
       console.error(error);
-      alert("حدث خطأ في الاتصال بالخادم");
+       notifyError(" حدث خطأ في الاتصال بالخادم");
+    
     }
   };
 

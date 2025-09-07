@@ -28,7 +28,7 @@ export default function Teachers() {
     experiences: "",
     memorized_parts: 0,
     is_save_quran: false,
-    password: "",
+    // password: "",
   });
   const navigate = useNavigate();
   const fetchTeachers = async () => {
@@ -325,16 +325,16 @@ export default function Teachers() {
                     </div>
                   )}
                 </div>
-                <div className="flex flex-col items-center gap-1 w-24 text-center break-words">
+                <div className="flex flex-col items-center gap-1 text-center break-words w-full">
                   <button onClick={() => navigate(`/userPro/${teacher.id}`)}>
                     <LuFileText className="text-[#2A603F] mx-auto" size={20} />
                     <span className="text-xs">الملف الشخصي</span>
                   </button>
                 </div>
-                <span className="text-xs break-words ">{teacher.phone} </span>
-                <span className="text-xs break-words ">{teacher.address} </span>
+                <span className="text-sm w-full   text-[#2A603F]  ">{teacher.phone} </span>
+                <span className="text-sm w-full break-words text-[#2A603F] ">{teacher.address} </span>
 
-                <span className="text-sm  break-words text-[#2A603F] font-zain ">
+                <span className="text-sm w-full break-words text-[#2A603F]   ">
                   {teacher.email}{" "}
                 </span>
                 <span className="text-sm break-words text-[#2A603F] font-zain ">{`${teacher.first_name} ${teacher.last_name}`}</span>
@@ -467,7 +467,7 @@ export default function Teachers() {
               حافظ للقرآن
             </label>
 
-            <input
+            {/* <input
               type="password"
               value={formData.password}
               onChange={(e) =>
@@ -475,7 +475,7 @@ export default function Teachers() {
               }
               className="w-full border rounded p-2 text-right"
               placeholder="كلمة المرور"
-            />
+            /> */}
 
             <button
               onClick={handleUpdate}

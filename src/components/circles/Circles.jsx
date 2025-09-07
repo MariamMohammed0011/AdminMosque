@@ -159,7 +159,7 @@ export default function Circles() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("هل أنت متأكد من حذف الكتاب؟")) return;
+    // if (!window.confirm("هل أنت متأكد من حذف الكتاب؟")) return;
 
     try {
       const token = localStorage.getItem("token");

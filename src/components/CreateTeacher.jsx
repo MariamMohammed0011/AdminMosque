@@ -1,5 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
+import {
+  notifySuccess,
+  notifyError,
+  notifyInfo,
+} from "../utils/toastNotifications.jsx";
 export default function CreateTeacher() {
   const mosqueId = localStorage.getItem("mosque_id");
   const [formData, setFormData] = useState({
@@ -35,14 +42,17 @@ export default function CreateTeacher() {
 
       const result = await response.json();
       if (response.ok) {
-        alert("تم إنشاء المعلم بنجاح!");
+         notifySuccess("تم إنشاء المعلم بنجاح!");
+       
       } else {
         console.error(result);
-        alert("فشل في الإرسال: " + result.message);
+         notifyError(" فشل في الإرسال:");
+      
       }
     } catch (error) {
       console.error(error);
-      alert("حدث خطأ في الاتصال بالخادم");
+       notifyError(" حدث خطأ في الاتصال بالخادم");
+     
     }
   };
 
@@ -70,8 +80,8 @@ export default function CreateTeacher() {
           <img src="/arrow.png" alt="رجوع" className="w-5" />
         </div>
 
-        <div className="flex flex-col lg:flex-row justify-center gap-6">
-          <div className="flex-1 max-w-[200px] mt-40 mr-20">
+        <div className="flex flex-col lg:flex-row justify-end  gap-6">
+          {/* <div className="flex-1 max-w-[200px] mt-40 mr-20">
             <h3 className="text-[18px] font-ruqaa text-center mb-4 text-[#6E9479]  ">
               تخصيص حلقة للمعلم
             </h3>
@@ -93,7 +103,7 @@ export default function CreateTeacher() {
                 </label>
               ))}
             </div>
-          </div>
+          </div> */}
 
           <div className="flex-2 max-w-[600px] mt-4">
             <h2 className="text-right font-bold text-[30px] mb-5">
