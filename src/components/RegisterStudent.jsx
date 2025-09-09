@@ -64,6 +64,7 @@ export default function RegisterStudent() {
       });
 
       const data = await res.json();
+      
       console.log("Status:", res.status);
       console.log("Response:", data);
 

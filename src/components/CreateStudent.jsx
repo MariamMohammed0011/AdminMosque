@@ -43,7 +43,8 @@ export default function CreateStudent() {
       const result = await response.json();
       if (response.ok) {
          notifySuccess("تم إنشاء الطالب بنجاح!");
-       
+        console.log("📌 بيانات الطالب المرسلة:", formData);
+      console.log("📌 استجابة السيرفر:", result);
       } else {
         console.error(result);
          notifyError(" فشل في الإرسال:");
@@ -154,7 +155,7 @@ export default function CreateStudent() {
 
           <input
             type="text"
-            placeholder="الشهادات"
+            placeholder="الدراسة"
             value={formData.certificates}
             onChange={(e) =>
               setFormData({ ...formData, certificates: e.target.value })
@@ -164,7 +165,7 @@ export default function CreateStudent() {
 
           <input
             type="text"
-            placeholder="الخبرات"
+            placeholder="العمل"
             value={formData.experiences}
             onChange={(e) =>
               setFormData({ ...formData, experiences: e.target.value })

@@ -3,7 +3,7 @@ import { IoMdAdd } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { TbPencilStar } from "react-icons/tb";
 import { RiFileList3Line } from "react-icons/ri";
-
+import { IoCloseOutline } from "react-icons/io5";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { TbBookmarkEdit } from "react-icons/tb";
 import { PiBookOpenTextThin } from "react-icons/pi";
@@ -184,49 +184,55 @@ export default function Circles() {
 
   const handleDeleteCircle = (id) => {
     toast.custom((t) => (
-      <div className="relative w-[300px] p-4 bg-green-100 border border-green-400 rounded shadow text-green-900">
-        <div className="text-sm font-medium py-1 mb-3">
-          هل أنت متأكد من حذف الحلقة؟
-        </div>
+     <div className="relative w-[300px] p-4 bg-[#D6E6DB] border border-[#AFD1BC] rounded-2xl shadow-lg text-[#2A603F]">
+  <div className="text-sm font-medium py-1 mb-3 text-right">
+    هل أنت متأكد من حذف الحلقة؟
+  </div>
 
-        <div className="flex justify-end gap-2">
-          <button
-            className="px-3 py-1 bg-gray-300 rounded"
-            onClick={() => toast.dismiss(t)}
-          >
-            لا
-          </button>
+  <div className="flex justify-end gap-2">
+    <button
+      className="px-3 py-1 bg-white border border-[#AFD1BC] text-[#2A603F] rounded-lg hover:bg-[#AFD1BC] hover:text-white transition"
+      onClick={() => toast.dismiss(t)}
+    >
+      لا
+    </button>
 
-          <button
-            className="px-3 py-1 bg-red-500 text-white rounded"
-            onClick={async () => {
-              toast.dismiss(t);
-              try {
-                const token = localStorage.getItem("token");
-                const res = await fetch(`/api/circle/deleteCircle/${id}`, {
-                  method: "DELETE",
-                  headers: { Authorization: `Bearer ${token}` },
-                });
+    <button
+      className="px-3 py-1 bg-[#2A603F] text-white rounded-lg hover:bg-[#245138] transition"
+      onClick={async () => {
+        toast.dismiss(t);
+        try {
+          const token = localStorage.getItem("token");
+          const res = await fetch(`/api/circle/deleteCircle/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-                if (res.ok) {
-                  setCircles((prev) => prev.filter((c) => c.id !== id));
-                  notifySuccess("تم حذف الحلقة ✅");
-                } else {
-                  notifyError("فشل الحذف ❌");
-                }
-              } catch (err) {
-                console.error(err);
-                notifyError("حدث خطأ أثناء الحذف ❌");
-              }
-            }}
-          >
-            نعم
-          </button>
-        </div>
+          if (res.ok) {
+            setCircles((prev) => prev.filter((c) => c.id !== id));
+            notifySuccess("تم حذف الحلقة ✅");
+          } else {
+            notifyError("فشل الحذف ❌");
+          }
+        } catch (err) {
+          console.error(err);
+          notifyError("حدث خطأ أثناء الحذف ❌");
+        }
+      }}
+    >
+      نعم
+    </button>
+  </div>
 
-        <CloseButton toastInstance={t} colorClass="text-green-700" />
-        <div className="absolute bottom-0 left-0 h-1 bg-green-500 animate-toast-bar" />
-      </div>
+  <IoCloseOutline
+    toastInstance={t}
+    className="absolute top-2 left-2 text-[#2A603F] hover:text-[#245138] cursor-pointer"
+    size={20}
+  />
+
+  <div className="absolute bottom-0 left-0 h-1 bg-[#2A603F] rounded animate-toast-bar" />
+</div>
+
     ));
   };
 

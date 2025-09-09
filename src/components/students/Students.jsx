@@ -14,6 +14,22 @@ export default function Students() {
   const [adminName, setAdminName] = useState("");
   const [editModal, setEditModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [showSortMenu, setShowSortMenu] = useState(false);
+const [sortField, setSortField] = useState("");
+const [sortOrder, setSortOrder] = useState("asc");
+const [showSortFieldMenu, setShowSortFieldMenu] = useState(false);
+const [showSortOrderMenu, setShowSortOrderMenu] = useState(false);
+const sortFieldLabel = (field) => {
+  switch (field) {
+    case "name":
+      return "الاسم";
+    case "address":
+      return "العنوان";
+    default:
+      return "";
+  }
+};
+
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -26,7 +42,7 @@ export default function Students() {
     experiences: "",
     memorized_parts: 0,
     is_save_quran: false,
-    // password: "",
+    code:"",
   });
 
   const navigate = useNavigate();
@@ -138,6 +154,7 @@ export default function Students() {
       address: formData.address,
       certificates: formData.certificates,
       experiences: formData.experiences,
+      code_user:formData.code_user,
       memorized_parts: formData.memorized_parts,
       is_save_quran: formData.is_save_quran,
       ...(formData.password ? { password: formData.password } : {}),
@@ -171,6 +188,28 @@ export default function Students() {
       console.error("Error updating student:", error);
     }
   };
+const getSortedStudents = () => {
+  let sorted = [...filteredStudents];
+  if (sortField) {
+    sorted.sort((a, b) => {
+      let aField = "";
+      let bField = "";
+
+      if (sortField === "name") {
+        aField = `${a.first_name} ${a.last_name}`.toLowerCase();
+        bField = `${b.first_name} ${b.last_name}`.toLowerCase();
+      } else if (sortField === "address") {
+        aField = a.address?.toLowerCase() || "";
+        bField = b.address?.toLowerCase() || "";
+      }
+
+      if (aField < bField) return sortOrder === "asc" ? -1 : 1;
+      if (aField > bField) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+  }
+  return sorted;
+};
 
   return (
     <div className="flex flex-col justify-between items-center">
@@ -184,11 +223,82 @@ export default function Students() {
         </h3>
       </div>
 
-      <div className="w-full mb-4 mr-5 flex justify-between md:gap-4 flex-col md:flex-row">
-        <button className="flex items-center gap-1 border px-3 py-1 rounded-lg shadow">
-          <Menu size={18} />
-          <span>تصنيف حسب</span>
-        </button>
+    <div className="w-full mb-4 mr-5 flex justify-between md:gap-4 flex-col md:flex-row">
+        <button
+  className="flex items-center gap-1 border px-3 py-1 rounded-lg shadow"
+  onClick={() => setShowSortMenu(!showSortMenu)}
+>
+  <Menu size={18} />
+  <span>تصنيف حسب</span>
+</button>
+{showSortMenu && (
+  <div className="absolute mt-10 w-72 bg-white border rounded-2xl shadow-lg p-4 space-y-4 z-20">
+    <button
+      onClick={() => setShowSortMenu(false)}
+      className="absolute left-2 top-2 text-gray-500 hover:text-gray-700"
+    >
+      <IoCloseCircleOutline size={30} />
+    </button>
+
+    {/* المجال */}
+    <div className="relative w-full">
+      <label className="flex flex-row-reverse mb-2 font-medium text-[#2A603F]">المجال</label>
+      <button
+        onClick={() => setShowSortFieldMenu(prev => !prev)}
+        className="w-full text-right p-2 border rounded-2xl bg-white flex justify-between items-center"
+      >
+        {sortField ? sortFieldLabel(sortField) : "اختر المجال"}
+        <span className="text-gray-400">▼</span>
+      </button>
+
+      {showSortFieldMenu && (
+        <ul className="absolute w-full bg-white border rounded-2xl mt-1 max-h-32 overflow-y-auto shadow-lg z-50">
+          {[
+            { value: "name", label: "الاسم" },
+            { value: "address", label: "العنوان" }
+          ].map(option => (
+            <li
+              key={option.value}
+              onClick={() => { setSortField(option.value); setShowSortFieldMenu(false); }}
+              className="p-2 hover:bg-[#AFD1BC] cursor-pointer text-right text-[#2A603F]"
+            >
+              {option.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    {/* الترتيب */}
+    <div className="relative w-full mt-2">
+      <label className="flex flex-row-reverse mb-2 font-medium text-[#2A603F]">الترتيب</label>
+      <button
+        onClick={() => setShowSortOrderMenu(prev => !prev)}
+        className="w-full text-right p-2 border rounded-2xl bg-white flex justify-between items-center"
+      >
+        {sortOrder === "asc" ? "تصاعدي" : "تنازلي"}
+        <span className="text-gray-400">▼</span>
+      </button>
+
+      {showSortOrderMenu && (
+        <ul className="absolute w-full bg-white border rounded-2xl mt-1 max-h-32 overflow-y-auto shadow-lg z-50">
+          {[
+            { value: "asc", label: "تصاعدي" },
+            { value: "desc", label: "تنازلي" }
+          ].map(option => (
+            <li
+              key={option.value}
+              onClick={() => { setSortOrder(option.value); setShowSortOrderMenu(false); }}
+              className="p-2 hover:bg-[#AFD1BC] cursor-pointer text-right text-[#2A603F]"
+            >
+              {option.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </div>
+)}
 
         <div className="relative flex w-[60%]">
           <input
@@ -196,16 +306,15 @@ export default function Students() {
             placeholder="بحث"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="border rounded-full pl-10 pr-3 py-2 shadow font-ruqaa placeholder:text-xl w-[600px] text-right"
-            style={{ direction: "rtl" }}
+            className="border rounded-full pl-10 font-ruqaa placeholder:text-xl pr-3 py-2 shadow focus:outline-[#AFD1BC] w-[600px]"
           />
-
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
             size={19}
           />
         </div>
       </div>
+
 
       <div className="bg-[#D6E6DB] rounded-xl p-4  shadow flex-1 overflow-x-auto  w-full">
         <div className="flex justify-end  items-end mb-6 flex-col text-right gap-5 ">
@@ -228,11 +337,12 @@ export default function Students() {
           </button>
         </div>
 
-        <div className="hidden md:grid grid-cols-7 bg-[#D6E6DB] text-[#2A603F] font-bold p-2 rounded-lg text-center ">
+        <div className="hidden md:grid grid-cols-8 bg-[#D6E6DB] text-[#2A603F] font-bold p-2 rounded-lg text-center ">
           <span>الإجراءات</span>
           <span>الملف الشخصي</span>
           <span>رقم الهاتف</span>
-          <span> العنوان</span>
+           <span> العنوان</span>
+          <span> الكود</span>
           <span>البريد الالكتروني</span>
           <span>اسم الطالب </span>
 
@@ -240,9 +350,9 @@ export default function Students() {
         </div>
 
         <div className="space-y-2 mt-2 ">
-          {filteredStudents.map((student) => (
+         {getSortedStudents().map((student) =>  (
             <div key={student.id}>
-              <div className="hidden md:grid grid-cols-7  bg-white p-2 rounded-lg text-center shadow hover:bg-gray-100 transition">
+              <div className="hidden md:grid grid-cols-8  bg-white p-2 rounded-lg text-center shadow hover:bg-gray-100 transition">
                 <div className="flex justify-center relative w-full">
                   <button
                     onClick={() =>
@@ -310,7 +420,9 @@ export default function Students() {
                 <span className="text-sm w-full break-words text-[#2A603F] ">
                   {student.address}{" "}
                 </span>
-
+                  <span className="text-sm w-full break-words text-[#2A603F] ">
+                  {student.code}{" "}
+                </span>
                 <span className="text-sm w-full break-words text-[#2A603F]   ">
                   {student.email}{" "}
                 </span>

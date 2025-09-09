@@ -43,6 +43,8 @@ export default function CreateTeacher() {
       const result = await response.json();
       if (response.ok) {
          notifySuccess("تم إنشاء المعلم بنجاح!");
+         console.log("📌 بيانات الطالب المرسلة:", formData);
+      console.log("📌 استجابة السيرفر:", result);
        
       } else {
         console.error(result);
