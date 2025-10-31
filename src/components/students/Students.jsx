@@ -6,7 +6,10 @@ import { LuFileText } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import { IoCloseOutline } from "react-icons/io5";
 import { IoCloseCircleOutline } from "react-icons/io5";
-
+import { useLocation } from "react-router-dom";
+import { MdPhoneInTalk } from "react-icons/md";
+import { GrLocationPin } from "react-icons/gr";
+import { LiaKeySolid } from "react-icons/lia";
 export default function Students() {
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,7 +39,7 @@ const sortFieldLabel = (field) => {
     phone: "",
     father_phone: "",
     birth_date: "",
-    email: "",
+    // email: "",
     address: "",
     certificates: "",
     experiences: "",
@@ -150,14 +153,14 @@ const sortFieldLabel = (field) => {
       phone: formData.phone,
       father_phone: formData.father_phone,
       birth_date: formData.birth_date,
-      email: formData.email,
+      // email: formData.email,
       address: formData.address,
       certificates: formData.certificates,
       experiences: formData.experiences,
       code_user:formData.code_user,
       memorized_parts: formData.memorized_parts,
       is_save_quran: formData.is_save_quran,
-      ...(formData.password ? { password: formData.password } : {}),
+      // ...(formData.password ? { password: formData.password } : {}),
     };
 
     try {
@@ -210,15 +213,23 @@ const getSortedStudents = () => {
   }
   return sorted;
 };
+const location = useLocation();
 
+useEffect(() => {
+  if (location.state?.refresh) {
+    fetchStudents();
+  }
+}, [location.state]);
   return (
     <div className="flex flex-col justify-between items-center">
       <div className="w-full pb-2 mr-5">
-        <h1 className="text-4xl font-light text-right font-zain">
-          ... أهلا بعودتك آ. {adminName ? adminName.split(" ")[0] : "مشرف"}
-        </h1>
+        <div className="flex flex-row-reverse justify-between  mb-2 ">
+        <h1 className="text-2xl mt-10 md:mt-0  md:text-4xl  font-light text-right font-zain whitespace-nowrap overflow-hidden text-ellipsis">
+    ... أهلاً بعودتك آ. {adminName ? adminName.split(" ")[0] : "مشرف"}
+  </h1>
 
-        <h3 className="text-2xl text-right text-gray-400 font-zain font-[200] mb-2">
+</div>
+  <h3 className="text-2xl text-right text-gray-400 font-zain font-[200] mb-2">
           كيف نساعدك اليوم ؟
         </h3>
       </div>
@@ -300,7 +311,8 @@ const getSortedStudents = () => {
   </div>
 )}
 
-        <div className="relative flex w-[60%]">
+        <div className="relative flex w-full md:w-[60%] mt-2 md:mt-0">
+       
           <input
             type="text"
             placeholder="بحث"
@@ -317,12 +329,12 @@ const getSortedStudents = () => {
 
 
       <div className="bg-[#D6E6DB] rounded-xl p-4  shadow flex-1 overflow-x-auto  w-full">
-        <div className="flex justify-end  items-end mb-6 flex-col text-right gap-5 ">
-          <h3 className="text-xl font-bold text-[#2A603F] text-right">
+         <div className="flex justify-end    items-end mb-6 flex-col  text-right gap-1 font-ruqaa">
+          <h3 className="flex text-xl font-bold text-[#2A603F] text-right ">
             الطلاب
           </h3>
           <button
-            className="flex items-center gap-3 text-[#2A603F] "
+            className="flex items-center gap-1 text-[#2A603F] "
             onClick={() => navigate("/createStudent")}
           >
             <div className="w-5 h-5 bg-white rounded text-center flex justify-center shadow-lg">
@@ -337,106 +349,213 @@ const getSortedStudents = () => {
           </button>
         </div>
 
-        <div className="hidden md:grid grid-cols-8 bg-[#D6E6DB] text-[#2A603F] font-bold p-2 rounded-lg text-center ">
+      <div className="hidden md:grid grid-cols-8 bg-[#D6E6DB] text-[#2A603F] font-bold p-2 rounded-lg text-center">
+
+<div className="md:hidden flex justify-between bg-[#D6E6DB] text-[#2A603F] font-bold p-2 rounded-lg text-sm">
+  <span>الطالب</span>
+  <span>التفاصيل</span>
+</div>
           <span>الإجراءات</span>
           <span>الملف الشخصي</span>
           <span>رقم الهاتف</span>
+           <span>رقم الهاتف الاب</span>
            <span> العنوان</span>
-          <span> الكود</span>
-          <span>البريد الالكتروني</span>
+           <span> الكود</span>
+          {/* <span>البريد الالكتروني</span> */}
           <span>اسم الطالب </span>
 
           <span></span>
         </div>
 
-        <div className="space-y-2 mt-2 ">
-         {getSortedStudents().map((student) =>  (
-            <div key={student.id}>
-              <div className="hidden md:grid grid-cols-8  bg-white p-2 rounded-lg text-center shadow hover:bg-gray-100 transition">
-                <div className="flex justify-center relative w-full">
-                  <button
-                    onClick={() =>
-                      setShowMenuIndex(
-                        student.id === showMenuIndex ? null : student.id
-                      )
-                    }
-                  >
-                    <MoreVertical />
-                  </button>
-                  {showMenuIndex === student.id && (
-                    <div className="absolute right-full translate-x-[60px] translate-y-2 bg-white border rounded shadow z-10 w-20 text-center flex flex-col">
-                      <button
-                        onClick={() => setShowMenuIndex(null)}
-                        className="flex justify-center items-center p-1 hover:bg-gray-100   absolute left-0 top-0"
-                      >
-                        <IoCloseOutline size={13} className="" />
-                      </button>
-                      <button
-                        className="block text-[#000] font-ruqaa hover:bg-gray-100 mt-4 "
-                        onClick={() => {
-                          setShowMenuIndex(null);
-                          setSelectedStudent(student);
-                          setFormData({
-                            first_name: student.first_name || "",
-                            last_name: student.last_name || "",
-                            phone: student.phone || "",
-                            father_phone: student.father_phone || "",
-                            birth_date: student.birth_date || "",
-                            email: student.email || "",
-                            address: student.address || "",
-                            certificates: student.certificates || "",
-                            experiences: student.experiences || "",
-                            memorized_parts: student.memorized_parts || 0,
-                            is_save_quran: student.is_save_quran || false,
-                            password: "",
-                          });
-                          setEditModal(true);
-                        }}
-                      >
-                        تعديل
-                      </button>
 
-                      <button
-                        className="block text-[#000] hover:bg-gray-100 font-ruqaa "
-                        onClick={() => {
-                          setShowMenuIndex(null);
-                          handleDelete(student.id);
-                        }}
-                      >
-                        حذف
-                      </button>
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col items-center gap-2 w-full text-center break-words">
-                  <button onClick={() => navigate(`/userPro/${student.id}`)}>
-                    <LuFileText className="text-[#2A603F] mx-auto" size={20} />
-                    <span className="text-xs">الملف الشخصي</span>
-                  </button>
-                </div>
-                <span className="text-sm w-full   text-[#2A603F]  ">
-                  {student.phone}{" "}
-                </span>
-                <span className="text-sm w-full break-words text-[#2A603F] ">
-                  {student.address}{" "}
-                </span>
-                  <span className="text-sm w-full break-words text-[#2A603F] ">
-                  {student.code}{" "}
-                </span>
-                <span className="text-sm w-full break-words text-[#2A603F]   ">
-                  {student.email}{" "}
-                </span>
-                <span className="w-full text-sm break-words text-[#2A603F]  font-zain    ">{`${student.first_name} ${student.last_name}`}</span>
 
-                <span className="w-full">
-                  <AccountCircleOutlinedIcon
-                    className="text-[#F8C248]  text-2xl "
-                    fontSize="large"
-                  />
-                </span>
-              </div>
-            </div>
-          ))}
+
+
+
+
+
+
+
+
+
+
+
+       <div className="space-y-2 mt-2">
+       {getSortedStudents().map((student) => (
+  <div key={student.id}>
+
+    {/* العرض الكبير (الكمبيوتر والتابلت) */}
+    <div className="hidden md:grid grid-cols-8 bg-white p-2 rounded-lg text-center shadow hover:bg-gray-100 transition">
+      <div className="flex justify-center relative">
+        <button
+          onClick={() =>
+            setShowMenuIndex(
+              student.id === showMenuIndex ? null : teacher.id
+            )
+          }
+        >
+          <MoreVertical />
+        </button>
+        {showMenuIndex === student.id && (
+          <div className="absolute right-full translate-x-[60px] translate-y-2 bg-white border rounded shadow z-10 w-20 text-center flex flex-col">
+            <button
+              onClick={() => setShowMenuIndex(null)}
+              className="flex justify-center items-center p-1 hover:bg-gray-100 absolute left-0 top-0"
+            >
+              <IoCloseOutline size={13} />
+            </button>
+
+            <button
+              className="block text-[#000] font-ruqaa hover:bg-gray-100 mt-4"
+              onClick={() => {
+                setShowMenuIndex(null);
+                setSelectedStudent(student);
+                setFormData({
+                  first_name: student.first_name || "",
+                  last_name: student.last_name || "",
+                  phone: student.phone || "",
+                  father_phone: student.father_phone || "",
+                  birth_date: student.birth_date || "",
+                  // email: student.email || "",
+                  address: student.address || "",
+                  certificates: student.certificates || "",
+                  experiences: student.experiences || "",
+                  memorized_parts: student.memorized_parts || 0,
+                  is_save_quran: student.is_save_quran || false,
+                  code: "",
+                });
+                setEditModal(true);
+              }}
+            >
+              تعديل
+            </button>
+
+            <button
+              className="block text-[#000] hover:bg-gray-100 font-ruqaa"
+              onClick={() => {
+                setShowMenuIndex(null);
+                handleDelete(student.id);
+              }}
+            >
+              حذف
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col items-center gap-1 text-center break-words w-full">
+        <button onClick={() => navigate(`/userPro/${student.id}`)}>
+          <LuFileText className="text-[#2A603F] mx-auto" size={20} />
+          <span className="text-xs">الملف الشخصي</span>
+        </button>
+      </div>
+
+      <span className="text-sm w-full text-[#2A603F]">{student.phone}</span>
+      <span className="text-sm w-full text-[#2A603F]">{student.father_phone}</span>
+      <span className="text-sm w-full break-words text-[#2A603F]">{student.address}</span>
+      <span className="text-sm w-full break-words text-[#2A603F]">{student.code}</span>
+      {/* <span className="text-sm w-full break-words text-[#2A603F]">{student.email}</span> */}
+      <span className="text-sm break-words text-[#2A603F] font-zain">{`${student.first_name} ${student.last_name}`}</span>
+      <span>
+        <AccountCircleOutlinedIcon className="text-[#F8C248]" />
+      </span>
+    </div>
+
+    {/* العرض على الموبايل */}
+    <div className="md:hidden bg-white rounded-xl p-4 shadow mb-3">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <AccountCircleOutlinedIcon className="text-[#F8C248]" />
+          <span className="font-zain text-[#2A603F] text-lg">{`${student.first_name} ${student.last_name}`}</span>
+        </div>
+        <button
+          onClick={() =>
+            setShowMenuIndex(
+              student.id === showMenuIndex ? null : student.id
+            )
+          }
+        >
+          <MoreVertical className="text-gray-500" />
+        </button>
+      </div>
+
+      {showMenuIndex === student.id && (
+        <div className="mt-2 flex justify-end">
+          <div className="bg-white border rounded shadow z-10 w-24 text-center flex flex-col">
+            <button
+              onClick={() => setShowMenuIndex(null)}
+              className="flex justify-center items-center p-1 hover:bg-gray-100 absolute left-0 top-0"
+            >
+              <IoCloseOutline size={13} />
+            </button>
+            <button
+              className="block text-[#000] font-ruqaa hover:bg-gray-100 mt-4"
+              onClick={() => {
+                setShowMenuIndex(null);
+                setSelectedTeacher(teacher);
+                setFormData({
+                  first_name: stu.first_name || "",
+                  last_name: stu.last_name || "",
+                  phone: stu.phone || "",
+                  father_phone: stu.father_phone || "",
+                  birth_date: stu.birth_date || "",
+                  // email: stu.email || "",
+                  address: stu.address || "",
+                  certificates: stu.certificates || "",
+                  experiences: stu.experiences || "",
+                  memorized_parts: stu.memorized_parts || 0,
+                  is_save_quran: stu.is_save_quran || false,
+                  code: "",
+                });
+                setEditModal(true);
+              }}
+            >
+              تعديل
+            </button>
+            <button
+              className="block text-[#000] hover:bg-gray-100 font-ruqaa"
+              onClick={() => {
+                setShowMenuIndex(null);
+                handleDelete(teacher.id);
+              }}
+            >
+              حذف
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-3 text-[#2A603F] space-y-1 text-sm">
+        <div className="flex items-center gap-2">
+          <MdPhoneInTalk className="text-[#2A603F]" />
+          <span className="font-zain text-[#2A603F] text-lg">{student.phone}</span>
+        </div>
+          <div className="flex items-center gap-2">
+          <MdPhoneInTalk className="text-[#2A603F]" />
+          <span className="font-zain text-[#2A603F] text-lg">{student.father_phone}</span>
+        </div>
+         <div className="flex items-center gap-2">
+          <LiaKeySolid className="text-[#636564]" />
+          <span className="font-zain text-[#2A603F] text-lg">{student.code}</span>
+        </div>
+         <div className="flex items-center gap-2">
+          <GrLocationPin className="text-red-700" />
+          <span className="font-zain text-[#2A603F] text-lg">{student.address}</span>
+        </div>
+        
+        <button
+          className="mt-2 flex items-center gap-1 text-[#2A603F] hover:underline"
+          onClick={() => navigate(`/userPro/${student.id}`)}
+        >
+          <LuFileText size={16} />
+          <span> الملف الشخصي</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+))}
+
         </div>
       </div>
 
@@ -500,7 +619,7 @@ const getSortedStudents = () => {
               className="w-full border rounded p-2 text-right"
               placeholder="تاريخ الميلاد"
             />
-            <input
+            {/* <input
               type="email"
               value={formData.email}
               onChange={(e) =>
@@ -508,7 +627,7 @@ const getSortedStudents = () => {
               }
               className="w-full border rounded p-2 text-right"
               placeholder="البريد الإلكتروني"
-            />
+            /> */}
             <input
               type="text"
               value={formData.address}

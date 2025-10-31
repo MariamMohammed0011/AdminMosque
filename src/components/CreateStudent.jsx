@@ -10,8 +10,8 @@ import {
 export default function CreateStudent() {
   const mosqueId = localStorage.getItem("mosque_id");
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    // email: "",
+    // password: "",
     first_name: "",
     last_name: "",
     mosque_id: mosqueId,
@@ -39,7 +39,7 @@ export default function CreateStudent() {
         },
         body: JSON.stringify(formData),
       });
-
+console.log(token);
       const result = await response.json();
       if (response.ok) {
          notifySuccess("تم إنشاء الطالب بنجاح!");
@@ -93,7 +93,7 @@ export default function CreateStudent() {
             className="bg-white rounded-xl shadow-md border border-gray-200 w-full p-2 text-right text-gray-500"
           />
 
-          <input
+          {/* <input
             placeholder="البريد الإلكتروني"
             type="email"
             value={formData.email}
@@ -111,7 +111,7 @@ export default function CreateStudent() {
               setFormData({ ...formData, password: e.target.value })
             }
             className="bg-white rounded-xl shadow-md border border-gray-200 w-full p-2 text-right text-gray-500"
-          />
+          /> */}
 
           <input
             type="text"
@@ -184,18 +184,22 @@ export default function CreateStudent() {
           />
         </div>
 
-        <div className=" absolute mt-14 ">
-          <button
-            onClick={handleSubmit}
-            className="translate-x-[550px] w-[160px] h-[45px] bg-[#A5C6A1] rounded-lg text-black font-bold text-base hover:bg-[#97BAA4] transition-colors"
-          >
-            إنشاء
-          </button>
-        </div>
+      
+       <div className="text-center mt-8">
+  <button
+    onClick={handleSubmit}
+    className="w-[160px] h-[45px] bg-[#CDE8D8] rounded-lg text-black font-bold text-base hover:bg-[#B3DAC6] mx-auto"
+  >
+    إنشاء
+  </button>
+</div>
 
         <div className="absolute bottom-0 left-2 w-[200px] hidden md:block  ">
           <img src="/satl.png" alt="plant" className="w-full" />
         </div>
+        
+<div className="absolute -top-[150px] -right-[100px] w-[400px] h-[300px] rounded-full bg-[#D6EAD9] blur-[200px] z-0"></div>
+
       </div>
     </div>
   );

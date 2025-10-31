@@ -80,13 +80,13 @@ export default function CreateCircle() {
     fetchCircleTypes();
     fetchStudentsAndTeachers();
   }, []);
+
   useEffect(() => {
     if (!circleId) return;
 
     const fetchCircleData = async () => {
       try {
         const token = localStorage.getItem("token");
-
         const resCircle = await fetch(`/api/circle/showWithId/${circleId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -130,7 +130,6 @@ export default function CreateCircle() {
   const handleSubmit = async () => {
     if (!circleData.name.trim()) {
       notifyError("يرجى إدخال اسم الحلقة");
-
       return;
     }
     if (!circleData.circle_type_id) {
@@ -139,17 +138,14 @@ export default function CreateCircle() {
     }
     if (circleData.student_id.length === 0) {
       notifyError("يرجى اختيار الطلاب");
-
       return;
     }
     if (circleData.teacher_id.length === 0) {
       notifyError("يرجى اختيار معلم");
-
       return;
     }
     if (!circleData.description.trim()) {
       notifyError("يرجى إدخال وصف للحلقة");
-
       return;
     }
 
@@ -178,31 +174,34 @@ export default function CreateCircle() {
       }
     } catch (error) {
       notifyInfo("يرجى مراجعة المعلومات.");
-
       console.error(error);
     }
   };
 
   return (
     <div className="min-h-screen bg-[#EBF0EA] flex items-start justify-center font-[Zain] p-6 relative">
-      <div className="relative w-full max-w-[1300px] bg-[#F3F7F3] rounded-2xl shadow-md px-8 py-5 h-[700px]">
+      <div className="relative w-full max-w-[1300px] bg-[#F3F7F3] rounded-2xl shadow-md px-6 py-5 h-auto md:h-[700px]">
+        {/* زر الرجوع */}
         <div
-          className="w-10 h-10 bg-white rounded-lg flex justify-center items-center absolute top-8 left-8 shadow-md cursor-pointer"
+          className="w-10 h-10 bg-white rounded-lg flex justify-center items-center absolute top-6 left-6 shadow-md cursor-pointer"
           onClick={() => navigate("/dashboard")}
         >
           <img src="/arrow.png" alt="رجوع" className="w-5" />
         </div>
 
-        <div className="flex flex-col lg:flex-row-reverse justify-start gap-10">
-          <div className="flex-1 max-w-[600px] mt-4">
-            <h2 className="text-right font-bold text-[30px] mb-10 text-[#2A3B1F]">
+        {/* المحتوى الرئيسي */}
+        <div className="flex flex-col lg:flex-row-reverse justify-start gap-10 max-lg:gap-6 max-md:gap-4">
+          {/* القسم الأول */}
+          <div className="flex-1 max-w-[600px] mt-4 w-full">
+            <h2 className="text-right font-bold mt-9 md:mt-0 text-[28px] md:text-[30px] mb-8 md:mb-10 text-[#2A3B1F]">
               إنشاء حلقة جديدة
             </h2>
 
-            <h3 className="text-right font-bold text-[25px] mb-2 text-[#2A3B1F]">
+            {/* اسم الحلقة */}
+            <h3 className="text-right font-bold text-[22px] md:text-[25px] mb-2 text-[#2A3B1F]">
               اسم الحلقة
             </h3>
-            <div className="relative mb-10">
+            <div className="relative mb-8">
               <input
                 type="text"
                 placeholder="اسم الحلقة"
@@ -214,20 +213,23 @@ export default function CreateCircle() {
               />
               <MdOutlineDateRange
                 className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none"
-                size={24}
+                size={22}
               />
             </div>
 
-            <h3 className="text-right font-bold text-[25px] mb-3 text-[#2A3B1F]">
+            {/* نوع الحلقة */}
+            <h3 className="text-right font-bold text-[22px] md:text-[25px] mb-2 text-[#2A3B1F]">
               نوع الحلقة
             </h3>
-            <div className="flex flex-col space-y-1 text-right py-3 items-end font-ruqaa ">
+            <div className="flex flex-col space-y-1 text-right py-3 items-end font-ruqaa">
               {circleTypes.map((type) => (
                 <label
                   key={type.id}
-                  className="flex justify-between items-center w-full max-w-[180px] px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-100"
+                  className="flex justify-between items-center w-full max-w-[200px] px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-100"
                 >
-                  <span className="text-[#2A3B1F]">{type.name}</span>
+                  <span className="text-[#2A3B1F] text-sm md:text-base">
+                    {type.name}
+                  </span>
                   <input
                     type="radio"
                     name="circleType"
@@ -245,7 +247,8 @@ export default function CreateCircle() {
               ))}
             </div>
 
-            <h3 className="text-right font-bold text-[25px] mb-2 mt-3 text-[#2A3B1F]">
+            {/* وصف الحلقة */}
+            <h3 className="text-right font-bold text-[22px] md:text-[25px] mb-2 mt-3 text-[#2A3B1F]">
               وصف الحلقة
             </h3>
             <div className="relative mb-10">
@@ -260,16 +263,17 @@ export default function CreateCircle() {
               />
               <MdOutlineDateRange
                 className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 pointer-events-none"
-                size={24}
+                size={22}
               />
             </div>
           </div>
 
-          <div className="flex-1 max-w-[300px] mt-4">
-            <div className="flex justify-center gap-4 mb-4">
+          {/* القسم الثاني */}
+          <div className="flex-1 max-w-[300px] mt-4 w-full">
+            <div className="flex justify-center gap-3 mb-4">
               <button
                 onClick={() => setSelectionMode("students")}
-                className={`px-4 py-2 rounded-lg font-bold ${
+                className={`px-4 py-2 rounded-lg font-bold text-sm md:text-base ${
                   selectionMode === "students"
                     ? "bg-[#97BAA4] text-white"
                     : "bg-gray-200"
@@ -279,13 +283,13 @@ export default function CreateCircle() {
               </button>
               <button
                 onClick={() => setSelectionMode("teachers")}
-                className={`px-4 py-2 rounded-lg font-bold ${
+                className={`px-4 py-2 rounded-lg font-bold text-sm md:text-base ${
                   selectionMode === "teachers"
                     ? "bg-[#97BAA4] text-white"
                     : "bg-gray-200"
                 }`}
               >
-                اختيار معلم للحلقة
+                اختيار معلم
               </button>
             </div>
 
@@ -330,19 +334,21 @@ export default function CreateCircle() {
           </div>
         </div>
 
-        <div>
+        {/* زر الإنشاء */}
+        <div className="flex justify-center mt-10">
           <button
             onClick={handleSubmit}
-            className="translate-x-[550px] w-[160px] h-[45px] bg-[#A5C6A1] rounded-lg text-black font-bold text-base hover:bg-[#97BAA4] transition-colors"
+            className="w-[160px] h-[45px] bg-[#A5C6A1] rounded-lg text-black font-bold text-base hover:bg-[#97BAA4] transition-colors"
           >
             {circleId ? "تعديل" : "إنشاء"}
           </button>
         </div>
 
+        {/* الديكورات */}
         <div className="absolute bottom-4 left-4 w-[180px] hidden md:block">
           <img src="/satl.png" alt="plant" className="w-full" />
         </div>
-        <div className="absolute -top-[150px] -right-[120px] w-[400px] h-[400px] rounded-full bg-[#D6EAD9] blur-[200px] z-0"></div>
+        <div className="absolute -top-[150px] -right-[120px] w-[400px] h-[300px] rounded-full bg-[#D6EAD9] blur-[200px] z-0"></div>
       </div>
     </div>
   );

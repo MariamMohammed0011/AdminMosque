@@ -8,7 +8,10 @@ import { FaMosque } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import { IoCloseOutline } from "react-icons/io5";
 import { IoCloseCircleOutline } from "react-icons/io5";
-
+import { useLocation } from "react-router-dom";
+import { MdPhoneInTalk } from "react-icons/md";
+import { GrLocationPin } from "react-icons/gr";
+import { LiaKeySolid } from "react-icons/lia";
 export default function Teachers() {
   const [teachers, setTeachers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,9 +39,9 @@ const sortFieldLabel = (field) => {
     first_name: "",
     last_name: "",
     phone: "",
-    father_phone: "",
+    // father_phone: "",
     birth_date: "",
-    email: "",
+    // email: "",
     address: "",
     certificates: "",
     experiences: "",
@@ -112,6 +115,7 @@ const sortFieldLabel = (field) => {
         phone.includes(searchTerm)
       );
     });
+    
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -209,13 +213,22 @@ const getSortedTeachers = () => {
   }
   return sorted;
 };
+const location = useLocation();
+
+useEffect(() => {
+  if (location.state?.refresh) {
+    fetchTeachers();
+  }
+}, [location.state]);
   return (
     <div className="flex flex-col justify-between items-center">
       <div className="w-full pb-2 mr-5">
         <div className="flex flex-row-reverse justify-between  mb-2 ">
-          <h1 className="text-4xl font-light text-right font-zain">
-            ... أهلا بعودتك آ. {adminName ? adminName.split(" ")[0] : "مشرف"}
-          </h1>
+        <h1 className="text-2xl mt-10 md:mt-0  md:text-4xl  font-light text-right font-zain whitespace-nowrap overflow-hidden text-ellipsis">
+    ... أهلاً بعودتك آ. {adminName ? adminName.split(" ")[0] : "مشرف"}
+  </h1>
+
+
 
           <motion.button
             initial={{ opacity: 0, scale: 0.5, x: 0, rotate: 0 }}
@@ -239,7 +252,7 @@ const getSortedTeachers = () => {
                 ease: "easeInOut",
               },
             }}
-            className="border-2 border-yellow-600 rounded-full p-3 shadow-lg bg-[#FBFAF8]"
+            className="border-2 border-yellow-600 rounded-full p-5 shadow-lg bg-[#FBFAF8] md:p-3 "
             onClick={() => navigate("/adminPro")}
           >
             <FaMosque className="text-[#2A603F]" size={32} />
@@ -327,7 +340,7 @@ const getSortedTeachers = () => {
   </div>
 )}
 
-        <div className="relative flex w-[60%]">
+        <div className="relative flex w-full md:w-[60%] mt-2 md:mt-0">
           <input
             type="text"
             placeholder="بحث"
@@ -364,99 +377,194 @@ const getSortedTeachers = () => {
           </button>
         </div>
 
-        <div className="hidden md:grid grid-cols-8 bg-[#D6E6DB] text-[#2A603F] font-bold p-2 rounded-lg text-center">
-          <span>الإجراءات</span>
+      <div className="hidden md:grid grid-cols-7 bg-[#D6E6DB] text-[#2A603F] font-bold p-2 rounded-lg text-center">
+
+<div className="md:hidden flex justify-between bg-[#D6E6DB] text-[#2A603F] font-bold p-2 rounded-lg text-sm">
+  <span>المعلم</span>
+  <span>التفاصيل</span>
+</div>
+<span>الإجراءات</span>
           <span>الملف الشخصي</span>
           <span>رقم الهاتف</span>
            <span> العنوان</span>
            <span> الكود</span>
-          <span>البريد الالكتروني</span>
+          {/* <span>البريد الالكتروني</span> */}
           <span>اسم المعلم </span>
 
           <span></span>
         </div>
 
         <div className="space-y-2 mt-2">
-         {getSortedTeachers().map((teacher) => (
-            <div key={teacher.id}>
-              <div className="hidden md:grid grid-cols-8  bg-white p-2 rounded-lg text-center shadow hover:bg-gray-100 transition">
-                <div className="flex justify-center relative">
-                  <button
-                    onClick={() =>
-                      setShowMenuIndex(
-                        teacher.id === showMenuIndex ? null : teacher.id
-                      )
-                    }
-                  >
-                    <MoreVertical />
-                  </button>
-                  {showMenuIndex === teacher.id && (
-                    <div className="absolute right-full translate-x-[60px] translate-y-2 bg-white border rounded shadow z-10 w-20 text-center flex flex-col">
-                      <button
-                        onClick={() => setShowMenuIndex(null)}
-                        className="flex justify-center items-center p-1 hover:bg-gray-100   absolute left-0 top-0"
-                      >
-                        <IoCloseOutline size={13} className="" />
-                      </button>
+       {getSortedTeachers().map((teacher) => (
+  <div key={teacher.id}>
 
-                      <button
-                        className="block text-[#000] font-ruqaa hover:bg-gray-100 mt-4 "
-                        onClick={() => {
-                          setShowMenuIndex(null);
-                          setSelectedTeacher(teacher);
-                          setFormData({
-                            first_name: teacher.first_name || "",
-                            last_name: teacher.last_name || "",
-                            phone: teacher.phone || "",
-                            father_phone: teacher.father_phone || "",
-                            birth_date: teacher.birth_date || "",
-                            email: teacher.email || "",
-                            address: teacher.address || "",
-                            certificates: teacher.certificates || "",
-                            experiences: teacher.experiences || "",
-                            memorized_parts: teacher.memorized_parts || 0,
-                            is_save_quran: teacher.is_save_quran || false,
-                           code: "",
-                          });
-                          setEditModal(true);
-                        }}
-                      >
-                        تعديل
-                      </button>
+    {/* العرض الكبير (الكمبيوتر والتابلت) */}
+    <div className="hidden md:grid grid-cols-7 bg-white p-2 rounded-lg text-center shadow hover:bg-gray-100 transition">
+      <div className="flex justify-center relative">
+        <button
+          onClick={() =>
+            setShowMenuIndex(
+              teacher.id === showMenuIndex ? null : teacher.id
+            )
+          }
+        >
+          <MoreVertical />
+        </button>
+        {showMenuIndex === teacher.id && (
+          <div className="absolute right-full translate-x-[60px] translate-y-2 bg-white border rounded shadow z-10 w-20 text-center flex flex-col">
+            <button
+              onClick={() => setShowMenuIndex(null)}
+              className="flex justify-center items-center p-1 hover:bg-gray-100 absolute left-0 top-0"
+            >
+              <IoCloseOutline size={13} />
+            </button>
 
-                      <button
-                        className="block text-[#000] hover:bg-gray-100 font-ruqaa"
-                        onClick={() => {
-                          setShowMenuIndex(null);
-                          handleDelete(teacher.id);
-                        }}
-                      >
-                        حذف
-                      </button>
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col items-center gap-1 text-center break-words w-full">
-                  <button onClick={() => navigate(`/userPro/${teacher.id}`)}>
-                    <LuFileText className="text-[#2A603F] mx-auto" size={20} />
-                    <span className="text-xs">الملف الشخصي</span>
-                  </button>
-                </div>
-                <span className="text-sm w-full   text-[#2A603F]  ">{teacher.phone} </span>
-                <span className="text-sm w-full break-words text-[#2A603F] ">{teacher.address} </span>
-                <span className="text-sm w-full break-words text-[#2A603F] ">{teacher.code} </span>
+            <button
+              className="block text-[#000] font-ruqaa hover:bg-gray-100 mt-4"
+              onClick={() => {
+                setShowMenuIndex(null);
+                setSelectedTeacher(teacher);
+                setFormData({
+                  first_name: teacher.first_name || "",
+                  last_name: teacher.last_name || "",
+                  phone: teacher.phone || "",
+                  // father_phone: teacher.father_phone || "",
+                  birth_date: teacher.birth_date || "",
+                  // email: teacher.email || "",
+                  address: teacher.address || "",
+                  certificates: teacher.certificates || "",
+                  experiences: teacher.experiences || "",
+                  memorized_parts: teacher.memorized_parts || 0,
+                  is_save_quran: teacher.is_save_quran || false,
+                  code: "",
+                });
+                setEditModal(true);
+              }}
+            >
+              تعديل
+            </button>
 
-                <span className="text-sm w-full break-words text-[#2A603F]   ">
-                  {teacher.email}{" "}
-                </span>
-                <span className="text-sm break-words text-[#2A603F] font-zain ">{`${teacher.first_name} ${teacher.last_name}`}</span>
+            <button
+              className="block text-[#000] hover:bg-gray-100 font-ruqaa"
+              onClick={() => {
+                setShowMenuIndex(null);
+                handleDelete(teacher.id);
+              }}
+            >
+              حذف
+            </button>
+          </div>
+        )}
+      </div>
 
-                <span>
-                  <AccountCircleOutlinedIcon className="text-[#F8C248]" />
-                </span>
-              </div>
-            </div>
-          ))}
+      <div className="flex flex-col items-center gap-1 text-center break-words w-full">
+        <button onClick={() => navigate(`/userPro/${teacher.id}`)}>
+          <LuFileText className="text-[#2A603F] mx-auto" size={20} />
+          <span className="text-xs">الملف الشخصي</span>
+        </button>
+      </div>
+
+      <span className="text-sm w-full text-[#2A603F]">{teacher.phone}</span>
+      <span className="text-sm w-full break-words text-[#2A603F]">{teacher.address}</span>
+      <span className="text-sm w-full break-words text-[#2A603F]">{teacher.code}</span>
+      {/* <span className="text-sm w-full break-words text-[#2A603F]">{teacher.email}</span> */}
+      <span className="text-sm break-words text-[#2A603F] font-zain">{`${teacher.first_name} ${teacher.last_name}`}</span>
+      <span>
+        <AccountCircleOutlinedIcon className="text-[#F8C248]" />
+      </span>
+    </div>
+
+    {/* العرض على الموبايل */}
+    <div className="md:hidden bg-white rounded-xl p-4 shadow mb-3">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <AccountCircleOutlinedIcon className="text-[#F8C248]" />
+          <span className="font-zain text-[#2A603F] text-lg">{`${teacher.first_name} ${teacher.last_name}`}</span>
+        </div>
+        <button
+          onClick={() =>
+            setShowMenuIndex(
+              teacher.id === showMenuIndex ? null : teacher.id
+            )
+          }
+        >
+          <MoreVertical className="text-gray-500" />
+        </button>
+      </div>
+
+      {showMenuIndex === teacher.id && (
+        <div className="mt-2 flex justify-end">
+          <div className="bg-white border rounded shadow z-10 w-24 text-center flex flex-col">
+            <button
+              onClick={() => setShowMenuIndex(null)}
+              className="flex justify-center items-center p-1 hover:bg-gray-100 absolute left-0 top-0"
+            >
+              <IoCloseOutline size={13} />
+            </button>
+            <button
+              className="block text-[#000] font-ruqaa hover:bg-gray-100 mt-4"
+              onClick={() => {
+                setShowMenuIndex(null);
+                setSelectedTeacher(teacher);
+                setFormData({
+                  first_name: teacher.first_name || "",
+                  last_name: teacher.last_name || "",
+                  phone: teacher.phone || "",
+                  // father_phone: teacher.father_phone || "",
+                  birth_date: teacher.birth_date || "",
+                  // email: teacher.email || "",
+                  address: teacher.address || "",
+                  certificates: teacher.certificates || "",
+                  experiences: teacher.experiences || "",
+                  memorized_parts: teacher.memorized_parts || 0,
+                  is_save_quran: teacher.is_save_quran || false,
+                  code: "",
+                });
+                setEditModal(true);
+              }}
+            >
+              تعديل
+            </button>
+            <button
+              className="block text-[#000] hover:bg-gray-100 font-ruqaa"
+              onClick={() => {
+                setShowMenuIndex(null);
+                handleDelete(teacher.id);
+              }}
+            >
+              حذف
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-3 text-[#2A603F] space-y-1 text-sm">
+        <div className="flex items-center gap-2">
+          <MdPhoneInTalk className="text-[#2A603F]" />
+          <span className="font-zain text-[#2A603F] text-lg">{teacher.phone}</span>
+        </div>
+         <div className="flex items-center gap-2">
+          <LiaKeySolid className="text-[#636564]" />
+          <span className="font-zain text-[#2A603F] text-lg">{teacher.code}</span>
+        </div>
+         <div className="flex items-center gap-2">
+          <GrLocationPin className="text-red-700" />
+          <span className="font-zain text-[#2A603F] text-lg">{teacher.address}</span>
+        </div>
+        
+        <button
+          className="mt-2 flex items-center gap-1 text-[#2A603F] hover:underline"
+          onClick={() => navigate(`/userPro/${teacher.id}`)}
+        >
+          <LuFileText size={16} />
+          <span> الملف الشخصي</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+))}
+
         </div>
       </div>
 
