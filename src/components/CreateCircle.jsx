@@ -335,7 +335,7 @@ export default function CreateCircle() {
         </div>
 
         {/* زر الإنشاء */}
-        <div className="flex justify-center mt-10">
+        <div className="flex justify-center mt-15">
           <button
             onClick={handleSubmit}
             className="w-[160px] h-[45px] bg-[#A5C6A1] rounded-lg text-black font-bold text-base hover:bg-[#97BAA4] transition-colors"
