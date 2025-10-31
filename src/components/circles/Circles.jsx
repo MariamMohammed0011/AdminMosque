@@ -199,6 +199,72 @@ useEffect(() => {
       </div>
     ));
   };
+  const handleEdit = async (id) => {
+  if (!newBook.name.trim()) {
+    notifyError("يرجى إدخال اسم الكتاب");
+    return;
+  }
+
+  if (!newBook.hadith_num || newBook.hadith_num === 0) {
+    notifyError("يرجى إدخال عدد الأحاديث");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`/api/hadith-book/update/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(newBook),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      // تعديل العنصر داخل الحالة المحلية
+      setBooks((prev) =>
+        prev.map((book) =>
+          book.id === id ? { ...book, ...newBook } : book
+        )
+      );
+      notifySuccess("تم تعديل الكتاب بنجاح ✅");
+      setNewBook({ name: "", hadith_num: "" });
+      setEditBookId(null);
+      fetchBooks(); // لتحديث القائمة بعد التعديل
+    } else {
+      notifyError("فشل التعديل ❌");
+    }
+  } catch (err) {
+    notifyError("حدث خطأ أثناء التعديل ❌");
+  }
+};
+
+const handleDelete = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`/api/hadith-book/delete/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.ok) {
+      setBooks((prev) => prev.filter((book) => book.id !== id));
+      notifySuccess("تم حذف الكتاب ✅");
+    } else {
+      const result = await res.json();
+      notifyError("فشل الحذف ❌");
+    }
+  } catch (err) {
+    console.error("خطأ أثناء الحذف:", err);
+    notifyError("حدث خطأ أثناء الحذف ❌");
+  }
+};
+
 
   return (
     <div className="flex flex-col gap-6 bg-[#FBFAF8] p-2 sm:p-4">
